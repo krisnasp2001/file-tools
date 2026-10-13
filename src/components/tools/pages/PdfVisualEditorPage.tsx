@@ -394,7 +394,7 @@ export function PdfVisualEditorPage() {
                             });
                           }
                         }}
-                        className={`absolute whitespace-pre-wrap origin-bottom-left hover:bg-blue-100/30 hover:text-black! focus:text-black! focus:bg-white focus:ring-1 focus:ring-primary outline-none transition-none ${item.isEdited ? "!text-black bg-white z-10" : ""}`}
+                        className={`absolute whitespace-pre-wrap origin-bottom-left hover:bg-blue-100/30 hover:text-black! focus:text-black! focus:bg-white focus:ring-1 focus:ring-primary outline-none transition-none ${item.isEdited ? "text-black! bg-white z-10" : ""}`}
                         style={{
                           left: `${item.x}px`,
                           top: `${item.y - item.fontSize * 0.8}px`,

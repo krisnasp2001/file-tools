@@ -126,9 +126,7 @@ export function FeedbackClient() {
         return;
       }
 
-      // Open the user's mail client with the pre-filled template
-      window.location.href = data.mailto;
-
+      // Email sent server-side — just show success
       setStatus("success");
     } catch {
       setStatus("error");

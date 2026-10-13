@@ -44,45 +44,45 @@ const FORMAT_OPTIONS: {
   badge: string;
   description: string;
 }[] = [
-  {
-    id: "mp4",
-    label: "MP4",
-    badge: "Most Compatible",
-    description: "H.264 video + AAC audio. Plays everywhere across browsers, phones, and TVs.",
-  },
-  {
-    id: "webm",
-    label: "WebM",
-    badge: "Web Standard",
-    description: "VP8 video + Vorbis audio. Open format optimized for modern HTML5 web playback.",
-  },
-  {
-    id: "mov",
-    label: "MOV",
-    badge: "Apple QuickTime",
-    description: "H.264 video + AAC audio in QuickTime container for Apple ecosystem & editing.",
-  },
-];
+    {
+      id: "mp4",
+      label: "MP4",
+      badge: "Most Compatible",
+      description: "H.264 video + AAC audio. Plays everywhere across browsers, phones, and TVs.",
+    },
+    {
+      id: "webm",
+      label: "WebM",
+      badge: "Web Standard",
+      description: "VP8 video + Vorbis audio. Open format optimized for modern HTML5 web playback.",
+    },
+    {
+      id: "mov",
+      label: "MOV",
+      badge: "Apple QuickTime",
+      description: "H.264 video + AAC audio in QuickTime container for Apple ecosystem & editing.",
+    },
+  ];
 
 const QUALITY_OPTIONS: {
   id: "medium" | "high" | "low";
   label: string;
   description: string;
 }[] = [
-  { id: "high", label: "High Quality", description: "Lower compression, crisp details, larger file" },
-  { id: "medium", label: "Balanced", description: "Recommended balance between quality and file size" },
-  { id: "low", label: "Compact Size", description: "Higher compression, smaller file, faster export" },
-];
+    { id: "high", label: "High Quality", description: "Lower compression, crisp details, larger file" },
+    { id: "medium", label: "Balanced", description: "Recommended balance between quality and file size" },
+    { id: "low", label: "Compact Size", description: "Higher compression, smaller file, faster export" },
+  ];
 
 const RESOLUTION_OPTIONS: {
   id: "original" | "1080p" | "720p" | "480p";
   label: string;
 }[] = [
-  { id: "original", label: "Original" },
-  { id: "1080p", label: "1080p (FHD)" },
-  { id: "720p", label: "720p (HD)" },
-  { id: "480p", label: "480p (SD)" },
-];
+    { id: "original", label: "Original" },
+    { id: "1080p", label: "1080p (FHD)" },
+    { id: "720p", label: "720p (HD)" },
+    { id: "480p", label: "480p (SD)" },
+  ];
 
 export function VideoConverterPage() {
   const [files, setFiles] = React.useState<SelectedFileItem[]>([]);
@@ -283,7 +283,7 @@ export function VideoConverterPage() {
                     <Clapperboard className="h-5 w-5" />
                   </div>
                   <div>
-                    <h3 className="max-w-[260px] truncate text-sm font-semibold text-neutral-900 sm:max-w-md dark:text-neutral-100">
+                    <h3 className="max-w-260px truncate text-sm font-semibold text-neutral-900 sm:max-w-md dark:text-neutral-100">
                       {currentFile.name}
                     </h3>
                     <p className="text-xs text-neutral-500 dark:text-neutral-400">
@@ -479,11 +479,10 @@ export function VideoConverterPage() {
                   type="button"
                   onClick={() => setTargetFormat(opt.id)}
                   disabled={isConverting}
-                  className={`flex flex-col rounded-xl border p-3 text-left transition-all ${
-                    targetFormat === opt.id
+                  className={`flex flex-col rounded-xl border p-3 text-left transition-all ${targetFormat === opt.id
                       ? "border-indigo-600 bg-indigo-50/60 dark:border-indigo-500 dark:bg-indigo-950/40"
                       : "border-neutral-200 bg-white hover:bg-neutral-50 dark:border-neutral-800 dark:bg-neutral-900 dark:hover:bg-neutral-800/60"
-                  }`}
+                    }`}
                 >
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-neutral-900 dark:text-neutral-100">
@@ -520,11 +519,10 @@ export function VideoConverterPage() {
                     type="button"
                     onClick={() => setQuality(opt.id)}
                     disabled={isConverting}
-                    className={`rounded-lg border py-2 text-xs font-medium transition-all ${
-                      quality === opt.id
+                    className={`rounded-lg border py-2 text-xs font-medium transition-all ${quality === opt.id
                         ? "border-neutral-900 bg-neutral-900 text-white dark:border-neutral-100 dark:bg-neutral-100 dark:text-neutral-900"
                         : "border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-50 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-300"
-                    }`}
+                      }`}
                   >
                     {opt.label}
                   </button>
@@ -544,11 +542,10 @@ export function VideoConverterPage() {
                     type="button"
                     onClick={() => setResolution(opt.id)}
                     disabled={isConverting}
-                    className={`rounded-lg border py-2 text-xs font-medium transition-all ${
-                      resolution === opt.id
+                    className={`rounded-lg border py-2 text-xs font-medium transition-all ${resolution === opt.id
                         ? "border-indigo-600 bg-indigo-50 text-indigo-700 dark:border-indigo-500 dark:bg-indigo-950/50 dark:text-indigo-300"
                         : "border-neutral-200 bg-white text-neutral-600 hover:bg-neutral-50 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-400"
-                    }`}
+                      }`}
                   >
                     {opt.label}
                   </button>
@@ -608,8 +605,8 @@ export function VideoConverterPage() {
                   {!preserveAudio
                     ? "None (Muted)"
                     : targetFormat === "webm"
-                    ? "Vorbis (128 kbps)"
-                    : "AAC (128 kbps)"}
+                      ? "Vorbis (128 kbps)"
+                      : "AAC (128 kbps)"}
                 </span>
               </div>
               <div className="flex justify-between">

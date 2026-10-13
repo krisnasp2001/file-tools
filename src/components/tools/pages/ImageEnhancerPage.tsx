@@ -207,7 +207,7 @@ export function ImageEnhancerPage() {
                   </div>
 
                   {resultPreviewUrl && (
-                    <div className="relative flex aspect-video max-h-[360px] w-full items-center justify-center overflow-hidden rounded-lg bg-neutral-100 dark:bg-neutral-900">
+                    <div className="relative flex aspect-video max-h-360px w-full items-center justify-center overflow-hidden rounded-lg bg-neutral-100 dark:bg-neutral-900">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={resultPreviewUrl}
@@ -272,22 +272,20 @@ export function ImageEnhancerPage() {
               <button
                 type="button"
                 onClick={() => setMode("enhance")}
-                className={`rounded-lg border p-3 text-left transition-colors ${
-                  mode === "enhance"
+                className={`rounded-lg border p-3 text-left transition-colors ${mode === "enhance"
                     ? "border-neutral-900 bg-neutral-900 text-white dark:border-neutral-100 dark:bg-neutral-100 dark:text-neutral-900"
                     : "border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-300"
-                }`}
+                  }`}
               >
                 <div className="flex items-center gap-1.5 text-xs font-semibold">
                   <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
                   Clarity & Detail
                 </div>
                 <div
-                  className={`mt-1 text-[11px] leading-tight ${
-                    mode === "enhance"
+                  className={`mt-1 text-[11px] leading-tight ${mode === "enhance"
                       ? "text-neutral-300 dark:text-neutral-600"
                       : "text-neutral-400"
-                  }`}
+                    }`}
                 >
                   Sharpen, balance contrast and colors
                 </div>
@@ -296,22 +294,20 @@ export function ImageEnhancerPage() {
               <button
                 type="button"
                 onClick={() => setMode("upscale")}
-                className={`rounded-lg border p-3 text-left transition-colors ${
-                  mode === "upscale"
+                className={`rounded-lg border p-3 text-left transition-colors ${mode === "upscale"
                     ? "border-neutral-900 bg-neutral-900 text-white dark:border-neutral-100 dark:bg-neutral-100 dark:text-neutral-900"
                     : "border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-300"
-                }`}
+                  }`}
               >
                 <div className="flex items-center gap-1.5 text-xs font-semibold">
                   <ZoomIn className="h-3.5 w-3.5" aria-hidden="true" />
                   Super-Sample
                 </div>
                 <div
-                  className={`mt-1 text-[11px] leading-tight ${
-                    mode === "upscale"
+                  className={`mt-1 text-[11px] leading-tight ${mode === "upscale"
                       ? "text-neutral-300 dark:text-neutral-600"
                       : "text-neutral-400"
-                  }`}
+                    }`}
                 >
                   Increase resolution 2× or 4×
                 </div>
@@ -329,11 +325,10 @@ export function ImageEnhancerPage() {
                       key={f}
                       type="button"
                       onClick={() => setScaleFactor(f as 2 | 4)}
-                      className={`rounded-md border py-2 text-xs font-semibold transition-colors ${
-                        scaleFactor === f
+                      className={`rounded-md border py-2 text-xs font-semibold transition-colors ${scaleFactor === f
                           ? "border-neutral-900 bg-neutral-900 text-white dark:border-neutral-100 dark:bg-neutral-100 dark:text-neutral-900"
                           : "border-neutral-200 bg-white text-neutral-600 hover:bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400"
-                      }`}
+                        }`}
                     >
                       {f}× ({dimensions ? `${dimensions.width * f}×${dimensions.height * f}px` : "Larger"})
                     </button>

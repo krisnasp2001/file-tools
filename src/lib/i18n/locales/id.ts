@@ -258,7 +258,7 @@ export const id: Translations = {
     subtitle:
       "Menemukan bug, punya ide, atau hanya ingin menyampaikan sesuatu? Kami ingin mendengar dari Anda.",
     privacyNote:
-      "Pesan Anda akan dibuka di klien email lokal Anda. Alamat email Anda tidak disimpan atau dikirimkan melalui situs web ini.",
+      "Pesan Anda dikirim langsung dan aman. Alamat email Anda tidak pernah disimpan atau dibagikan.",
     typeLabel: "Jenis umpan balik apa ini?",
     typeBug: "Laporan Bug",
     typeFeature: "Permintaan Fitur",
@@ -271,13 +271,13 @@ export const id: Translations = {
     messagePlaceholder:
       "Jelaskan apa yang terjadi, apa yang Anda harapkan, atau saran Anda…",
     howItWorks:
-      "Mengklik 'Kirim Umpan Balik' akan membuka klien email perangkat Anda dengan pesan yang sudah terisi. Anda yang menentukan apa yang dikirim.",
-    submitButton: "Buka Klien Email",
-    submitting: "Menyiapkan…",
+      "Umpan balik Anda dikirim langsung kepada kami. Tidak perlu aplikasi email — cukup klik Kirim dan kami akan menerimanya seketika.",
+    submitButton: "Kirim Umpan Balik",
+    submitting: "Mengirim…",
     sendAnother: "Kirim Lagi",
-    successTitle: "Klien email terbuka!",
+    successTitle: "Umpan balik terkirim!",
     successBody:
-      "Klien email Anda telah dibuka dengan pesan yang sudah terisi. Tinjau pesannya dan klik Kirim jika sudah siap.",
+      "Terima kasih! Umpan balik Anda telah diterima. Kami menghargai waktu yang Anda luangkan untuk membantu meningkatkan File Tools.",
     errorGeneric: "Terjadi kesalahan. Silakan coba lagi.",
     unavailableTitle: "Umpan balik sementara tidak tersedia",
     unavailableBody:

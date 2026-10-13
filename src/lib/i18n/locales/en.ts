@@ -256,7 +256,7 @@ export const en = {
     subtitle:
       "Found a bug, have an idea, or just want to say something? We'd love to hear from you.",
     privacyNote:
-      "Your message will open in your local email client. Your email address is not stored or transmitted through this website.",
+      "Your message is sent directly and securely. Your email address is never stored or shared.",
     typeLabel: "What kind of feedback is this?",
     typeBug: "Bug Report",
     typeFeature: "Feature Request",
@@ -269,13 +269,13 @@ export const en = {
     messagePlaceholder:
       "Describe what happened, what you expected, or your suggestion…",
     howItWorks:
-      "Clicking 'Send Feedback' will open your device's email client with a pre-filled message. You are in control of what is sent.",
-    submitButton: "Open Email Client",
-    submitting: "Preparing…",
+      "Your feedback is sent directly to us. No email client required — just click Send and we'll receive it instantly.",
+    submitButton: "Send Feedback",
+    submitting: "Sending…",
     sendAnother: "Send Another",
-    successTitle: "Email client opened!",
+    successTitle: "Feedback sent!",
     successBody:
-      "Your email client has been opened with a pre-filled message. Review it and click Send when you're ready.",
+      "Thank you! Your feedback has been received. We appreciate you taking the time to help improve File Tools.",
     errorGeneric: "Something went wrong. Please try again.",
     unavailableTitle: "Feedback temporarily unavailable",
     unavailableBody:

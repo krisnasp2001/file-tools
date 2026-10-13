@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import * as React from "react";
 import { ToolPageLayout } from "@/components/tools/ToolPageLayout";
@@ -22,7 +22,7 @@ import {
   ZoomIn,
 } from "lucide-react";
 
-export function ImageEnhancerPage() {
+export function ImageEnhancerPage({ hideHeader }: { hideHeader?: boolean }) {
   const [files, setFiles] = React.useState<SelectedFileItem[]>([]);
   const [dimensions, setDimensions] = React.useState<ImageDimensions | null>(null);
   const [isReadingDims, setIsReadingDims] = React.useState(false);
@@ -157,7 +157,7 @@ export function ImageEnhancerPage() {
     !result;
 
   return (
-    <ToolPageLayout
+    <ToolPageLayout hideHeader={hideHeader}
       breadcrumbs={breadcrumbs}
       title="Image Enhancer & Upscaler"
       description="Enhance clarity, color depth, contrast, and super-sample images with sharp local filtering."

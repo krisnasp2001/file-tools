@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import * as React from "react";
 import { ToolPageLayout } from "@/components/tools/ToolPageLayout";
@@ -18,7 +18,7 @@ import {
   ArrowRight
 } from "lucide-react";
 
-export function VideoToAudioPage() {
+export function VideoToAudioPage({ hideHeader }: { hideHeader?: boolean }) {
   const [files, setFiles] = React.useState<SelectedFileItem[]>([]);
   const [isConverting, setIsConverting] = React.useState(false);
   const [progress, setProgress] = React.useState(0);
@@ -75,7 +75,7 @@ export function VideoToAudioPage() {
   ];
 
   return (
-    <ToolPageLayout
+    <ToolPageLayout hideHeader={hideHeader}
       breadcrumbs={breadcrumbs}
       title="Extract Audio from Video"
       description="Extract clean audio tracks from video files directly in your browser. Supports MP4, WebM, and more."

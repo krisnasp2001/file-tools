@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 /**
  * PdfEditorPage.tsx
@@ -363,7 +363,7 @@ const BREADCRUMBS = [
   { label: "PDF Editor" },
 ];
 
-export function PdfEditorPage() {
+export function PdfEditorPage({ hideHeader }: { hideHeader?: boolean }) {
   // ------------------------------------------------------------------
   // State
   // ------------------------------------------------------------------
@@ -506,7 +506,7 @@ export function PdfEditorPage() {
   // Render
   // ------------------------------------------------------------------
   return (
-    <ToolPageLayout
+    <ToolPageLayout hideHeader={hideHeader}
       breadcrumbs={BREADCRUMBS}
       title="PDF Editor"
       description="Upload a PDF, edit the text freely in a Word-like workspace, then download your modified document — all 100% in your browser."

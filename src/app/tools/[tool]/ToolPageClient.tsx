@@ -57,7 +57,13 @@ import {
   VideoConverterPage,
 } from "@/components/tools/pages";
 
-const TOOL_PAGE_MAP: Record<string, React.ComponentType> = {
+export interface ToolPageProps {
+  /** When true the tool page suppresses its internal header/breadcrumb because
+   * the parent server component (ToolPageShell) already rendered it via SSR. */
+  hideHeader?: boolean;
+}
+
+const TOOL_PAGE_MAP: Record<string, React.ComponentType<ToolPageProps>> = {
   // Existing Image & PDF tools
   "jpg-to-pdf": JpgToPdfPage,
   "merge-pdf": MergePdfPage,
@@ -126,13 +132,14 @@ const TOOL_PAGE_MAP: Record<string, React.ComponentType> = {
 
 interface ToolPageClientProps {
   slug: string;
+  hideHeader?: boolean;
 }
 
-export function ToolPageClient({ slug }: ToolPageClientProps) {
+export function ToolPageClient({ slug, hideHeader }: ToolPageClientProps) {
   const PageComponent = TOOL_PAGE_MAP[slug];
   if (!PageComponent) {
     notFound();
   }
 
-  return <PageComponent />;
+  return <PageComponent hideHeader={hideHeader} />;
 }

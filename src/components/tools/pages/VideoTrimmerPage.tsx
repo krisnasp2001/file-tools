@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import * as React from "react";
 import { ToolPageLayout } from "@/components/tools/ToolPageLayout";
@@ -18,7 +18,7 @@ import {
   ArrowRight
 } from "lucide-react";
 import { VideoTimelineEditor } from "@/components/media/VideoTimelineEditor";
-export function VideoTrimmerPage() {
+export function VideoTrimmerPage({ hideHeader }: { hideHeader?: boolean }) {
   const [files, setFiles] = React.useState<SelectedFileItem[]>([]);
   const [startTime, setStartTime] = React.useState<number>(0);
   const [endTime, setEndTime] = React.useState<number>(0);
@@ -102,7 +102,7 @@ export function VideoTrimmerPage() {
   ];
 
   return (
-    <ToolPageLayout
+    <ToolPageLayout hideHeader={hideHeader}
       breadcrumbs={breadcrumbs}
       title="Video Trimmer"
       description="Cut and trim your video files locally without uploading. Uses stream copying for fast processing."

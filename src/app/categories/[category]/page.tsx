@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { CategoryPageClient } from "@/components/home/CategoryPageClient";
-import { TOOL_CATEGORIES } from "@/lib/tools/registry";
+import { TOOL_CATEGORIES, TOOLS } from "@/lib/tools/registry";
+import { SITE_URL } from "@/lib/config/site";
 import type { Metadata } from "next";
 import type { ToolCategory } from "@/lib/tools/types";
 
@@ -37,5 +38,59 @@ export default async function CategoryPage({ params }: Props) {
 
   if (!cat) notFound();
 
-  return <CategoryPageClient categoryId={category as ToolCategory} />;
+  const toolsInCategory = TOOLS.filter(
+    (t) => t.category === category && t.isAvailable
+  );
+
+  // --- JSON-LD: BreadcrumbList ---
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: SITE_URL,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: `${cat!.name} Tools`,
+        item: `${SITE_URL}/categories/${cat!.id}`,
+      },
+    ],
+  };
+
+  // --- JSON-LD: ItemList (list of tools in this category) ---
+  const itemListSchema = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: `${cat!.name} Tools - File Tools`,
+    description: cat!.description,
+    url: `${SITE_URL}/categories/${cat!.id}`,
+    numberOfItems: toolsInCategory.length,
+    itemListElement: toolsInCategory.map((tool, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: tool.name,
+      description: tool.shortDescription,
+      url: `${SITE_URL}/tools/${tool.slug}`,
+    })),
+  };
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
+      />
+      <CategoryPageClient categoryId={category as ToolCategory} />
+    </>
+  );
 }
+

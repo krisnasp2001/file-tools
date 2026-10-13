@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import * as React from "react";
 import { ToolPageLayout } from "@/components/tools/ToolPageLayout";
@@ -24,7 +24,7 @@ const BREADCRUMBS = [
 type SplitMode = "extract-selected" | "split-every-page";
 type RenderState = "idle" | "loading" | "ready" | "error";
 
-export function SplitPdfPage() {
+export function SplitPdfPage({ hideHeader }: { hideHeader?: boolean }) {
   const [files, setFiles] = React.useState<SelectedFileItem[]>([]);
   const [pages, setPages] = React.useState<PdfPageCardData[]>([]);
   const [selectedIds, setSelectedIds] = React.useState<Set<string>>(new Set());
@@ -145,7 +145,7 @@ export function SplitPdfPage() {
   };
 
   return (
-    <ToolPageLayout
+    <ToolPageLayout hideHeader={hideHeader}
       breadcrumbs={BREADCRUMBS}
       title={tool.name}
       description={tool.description}

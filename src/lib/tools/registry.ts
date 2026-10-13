@@ -41,7 +41,7 @@ export const TOOLS: ToolDefinition[] = [
     name: "JPG to PDF",
     shortDescription: "Convert JPG and PNG images into a PDF document.",
     description:
-      "Transform one or more JPG, JPEG, or PNG images into a single clean PDF document with custom page sizes and layout fitting.",
+      "Transform one or more JPG, JPEG, or PNG images into a single clean PDF document with custom page sizes and layout fitting. 100% free, no upload required — all processing happens in your browser.",
     category: "pdf",
     categoryLabel: "PDF",
     inputTypes: [".jpg", ".jpeg", ".png"],
@@ -52,6 +52,34 @@ export const TOOLS: ToolDefinition[] = [
     route: "/tools/jpg-to-pdf",
     iconName: "FileImage",
     isAvailable: true,
+    faq: [
+      {
+        question: "How do I convert JPG to PDF for free?",
+        answer:
+          "Upload your JPG or PNG images on this page, arrange them in the desired order, then click Convert. The PDF is generated instantly in your browser — no account, no upload to any server.",
+      },
+      {
+        question: "Is my image data kept private?",
+        answer:
+          "Yes. File Tools processes everything client-side in your browser. Your images never leave your device and are never uploaded to any server.",
+      },
+      {
+        question: "How many images can I convert at once?",
+        answer:
+          "You can convert up to 50 images at once. Each file can be up to 50 MB in size.",
+      },
+      {
+        question: "What image formats are supported?",
+        answer:
+          "JPG/JPEG and PNG are supported. Each image becomes a separate page in the output PDF.",
+      },
+    ],
+    howTo: [
+      { name: "Upload your images", text: "Click the upload area or drag and drop your JPG or PNG files onto the page." },
+      { name: "Arrange pages", text: "Drag images to reorder them. Each image will become one page in the PDF." },
+      { name: "Choose page size", text: "Select a page size such as A4 or Letter, or use the image's original dimensions." },
+      { name: "Convert and download", text: "Click the Convert button. The PDF file will be ready for download in seconds." },
+    ],
   },
   {
     id: "merge-pdf",
@@ -59,7 +87,7 @@ export const TOOLS: ToolDefinition[] = [
     name: "Merge PDF",
     shortDescription: "Combine multiple PDF documents into a single file.",
     description:
-      "Select multiple PDF documents, preview individual pages, reorder or remove pages, and merge them into one organized file.",
+      "Select multiple PDF documents, preview individual pages, reorder or remove pages, and merge them into one organized file. Free, private, and 100% client-side — no file uploads needed.",
     category: "pdf",
     categoryLabel: "PDF",
     inputTypes: [".pdf"],
@@ -70,6 +98,34 @@ export const TOOLS: ToolDefinition[] = [
     route: "/tools/merge-pdf",
     iconName: "Merge",
     isAvailable: true,
+    faq: [
+      {
+        question: "How do I merge PDF files for free?",
+        answer:
+          "Upload two or more PDF files using the upload area, reorder them if needed, then click Merge. Your combined PDF will download automatically — no sign-up required.",
+      },
+      {
+        question: "Is there a limit to how many PDFs I can merge?",
+        answer:
+          "You can merge up to 30 PDF files at once. The combined total size can be up to 100 MB.",
+      },
+      {
+        question: "Will merging PDFs reduce the quality?",
+        answer:
+          "No. File Tools merges PDFs without re-encoding or compressing content, so the output quality matches the originals.",
+      },
+      {
+        question: "Are my PDF files safe when using this tool?",
+        answer:
+          "Completely. All merging happens inside your browser. Files are never sent to a server, ensuring full privacy.",
+      },
+    ],
+    howTo: [
+      { name: "Upload PDF files", text: "Drag and drop or click to upload the PDF files you want to combine." },
+      { name: "Reorder documents", text: "Drag the PDF thumbnails to arrange them in the order you want in the final file." },
+      { name: "Remove unwanted pages", text: "Click the remove icon on any page thumbnail to exclude it from the merged output." },
+      { name: "Merge and download", text: "Click Merge PDF. The combined file will download to your device instantly." },
+    ],
   },
   {
     id: "split-pdf",
@@ -77,7 +133,7 @@ export const TOOLS: ToolDefinition[] = [
     name: "Split PDF",
     shortDescription: "Extract selected pages or split each page into a separate PDF.",
     description:
-      "Preview PDF pages with thumbnail cards, select desired pages to extract, or prepare to split each page individually.",
+      "Preview PDF pages with thumbnail cards, select desired pages to extract, or split each page into a separate PDF file. Free and private — no server uploads, runs entirely in your browser.",
     category: "pdf",
     categoryLabel: "PDF",
     inputTypes: [".pdf"],
@@ -88,6 +144,29 @@ export const TOOLS: ToolDefinition[] = [
     route: "/tools/split-pdf",
     iconName: "Scissors",
     isAvailable: true,
+    faq: [
+      {
+        question: "How do I split a PDF into separate pages?",
+        answer:
+          "Upload your PDF file, then choose to split every page into individual PDFs or select specific pages to extract. Click Split to download the resulting files.",
+      },
+      {
+        question: "Can I extract just a few pages from a PDF?",
+        answer:
+          "Yes. After uploading, select the specific page thumbnails you want to extract and click Extract Selected Pages.",
+      },
+      {
+        question: "Is splitting a PDF free?",
+        answer:
+          "Yes, completely free. File Tools does not require a subscription or account. All processing is done in your browser.",
+      },
+    ],
+    howTo: [
+      { name: "Upload your PDF", text: "Click or drag your PDF file onto the upload area." },
+      { name: "Preview pages", text: "Browse the page thumbnails to see the content of each page." },
+      { name: "Select pages to extract", text: "Click individual page thumbnails to select or deselect them, or choose to split all pages." },
+      { name: "Download split files", text: "Click Split or Extract. The resulting PDF files will download as a ZIP archive." },
+    ],
   },
   {
     id: "pdf-to-images",
@@ -95,7 +174,7 @@ export const TOOLS: ToolDefinition[] = [
     name: "PDF to Images",
     shortDescription: "Extract pages from a PDF document as separate image files (JPG, PNG, WebP).",
     description:
-      "Convert PDF pages into high-quality image files with client-side rendering.",
+      "Convert each page of a PDF into high-quality JPG, PNG, or WebP image files — all processed locally in your browser with no file uploads.",
     category: "pdf",
     categoryLabel: "PDF",
     inputTypes: [".pdf"],
@@ -106,6 +185,29 @@ export const TOOLS: ToolDefinition[] = [
     route: "/tools/pdf-to-images",
     iconName: "FileText",
     isAvailable: true,
+    faq: [
+      {
+        question: "How do I convert a PDF to images?",
+        answer:
+          "Upload your PDF file, choose the output format (JPG, PNG, or WebP), and click Convert. Each page of the PDF becomes a separate image file, downloadable as a ZIP.",
+      },
+      {
+        question: "What image formats can I export from a PDF?",
+        answer:
+          "File Tools supports exporting PDF pages as JPG (small file size), PNG (lossless quality), or WebP (modern format with great compression).",
+      },
+      {
+        question: "Does the image quality stay high?",
+        answer:
+          "Yes. PDF pages are rendered at high resolution using your browser's built-in PDF renderer, preserving text sharpness and image quality.",
+      },
+    ],
+    howTo: [
+      { name: "Upload your PDF", text: "Drag and drop or click to upload a PDF file (up to 50 MB)." },
+      { name: "Choose image format", text: "Select JPG, PNG, or WebP as the output format for your images." },
+      { name: "Convert pages", text: "Click Convert to PDF to Images. Each page is rendered as a separate image." },
+      { name: "Download images", text: "Download individual images or click Download All to get a ZIP file with every page." },
+    ],
   },
   {
     id: "pdf-editor",

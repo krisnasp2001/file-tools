@@ -12,6 +12,9 @@ export interface ToolPageLayoutProps {
   settings?: React.ReactNode;
   supportingInfo?: React.ReactNode;
   className?: string;
+  /** When true, hides the breadcrumb and header because the server-rendered
+   * ToolPageShell already rendered them above this component via SSR. */
+  hideHeader?: boolean;
 }
 
 export function ToolPageLayout({
@@ -23,6 +26,7 @@ export function ToolPageLayout({
   settings,
   supportingInfo,
   className = "",
+  hideHeader = false,
 }: ToolPageLayoutProps) {
   const { t } = useTranslation();
 
@@ -38,25 +42,27 @@ export function ToolPageLayout({
 
   return (
     <div className={`mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:py-10 ${className}`}>
-      {/* 1. Breadcrumb */}
-      <Breadcrumb items={localizedBreadcrumbs} className="mb-6" />
+      {/* 1. Breadcrumb — hidden when SSR shell already rendered it */}
+      {!hideHeader && <Breadcrumb items={localizedBreadcrumbs} className="mb-6" />}
 
-      {/* 2. Tool Title & Header */}
-      <header className="mb-8 border-b border-neutral-200 pb-6 dark:border-neutral-800">
-        <div className="flex flex-wrap items-center gap-3">
-          <h1 className="text-2xl font-bold tracking-tight text-neutral-900 sm:text-3xl lg:text-4xl dark:text-neutral-50">
-            {title}
-          </h1>
-          {badge && (
-            <span className="rounded-md bg-neutral-100 px-2.5 py-0.5 text-xs font-semibold text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300">
-              {badge}
-            </span>
-          )}
-        </div>
-        <p className="mt-2 max-w-3xl text-sm leading-relaxed text-neutral-600 sm:text-base dark:text-neutral-400">
-          {description}
-        </p>
-      </header>
+      {/* 2. Tool Title & Header — hidden when SSR shell already rendered it */}
+      {!hideHeader && (
+        <header className="mb-8 border-b border-neutral-200 pb-6 dark:border-neutral-800">
+          <div className="flex flex-wrap items-center gap-3">
+            <h1 className="text-2xl font-bold tracking-tight text-neutral-900 sm:text-3xl lg:text-4xl dark:text-neutral-50">
+              {title}
+            </h1>
+            {badge && (
+              <span className="rounded-md bg-neutral-100 px-2.5 py-0.5 text-xs font-semibold text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300">
+                {badge}
+              </span>
+            )}
+          </div>
+          <p className="mt-2 max-w-3xl text-sm leading-relaxed text-neutral-600 sm:text-base dark:text-neutral-400">
+            {description}
+          </p>
+        </header>
+      )}
 
       {/* 3. Main Workspace & Responsive Grid */}
       <main>

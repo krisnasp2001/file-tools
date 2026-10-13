@@ -33,6 +33,7 @@ export interface GenericDocumentConvertPageProps {
     previewHtml?: string;
   }>;
   disclaimer?: string;
+  hideHeader?: boolean;
 }
 
 export function GenericDocumentConvertPage({
@@ -44,6 +45,7 @@ export function GenericDocumentConvertPage({
   description,
   onConvert,
   disclaimer = "Converts detected content into an editable format. Complex layouts, fonts, tables, and styling may require manual adjustment.",
+  hideHeader,
 }: GenericDocumentConvertPageProps) {
   const [files, setFiles] = React.useState<SelectedFileItem[]>([]);
   const [isConverting, setIsConverting] = React.useState(false);
@@ -96,7 +98,7 @@ export function GenericDocumentConvertPage({
   ];
 
   return (
-    <ToolPageLayout
+    <ToolPageLayout hideHeader={hideHeader}
       breadcrumbs={breadcrumbs}
       title={`${sourceFormatName} to ${targetFormatName}`}
       description={description}

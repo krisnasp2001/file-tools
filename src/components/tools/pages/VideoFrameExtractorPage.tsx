@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import * as React from "react";
 import { ToolPageLayout } from "@/components/tools/ToolPageLayout";
@@ -49,7 +49,7 @@ const BREADCRUMBS = [
   { label: "Video Frame Extractor" },
 ];
 
-export function VideoFrameExtractorPage() {
+export function VideoFrameExtractorPage({ hideHeader }: { hideHeader?: boolean }) {
   const [files, setFiles] = React.useState<SelectedFileItem[]>([]);
   const [videoUrl, setVideoUrl] = React.useState<string | null>(null);
   const [duration, setDuration] = React.useState<number>(0);
@@ -388,7 +388,7 @@ export function VideoFrameExtractorPage() {
 
   return (
     <>
-      <ToolPageLayout
+      <ToolPageLayout hideHeader={hideHeader}
         breadcrumbs={BREADCRUMBS}
         title="Video Frame Extractor"
         description="Extract crystal-clear image frames from your videos at any timestamp or in batches. Runs completely client-side in your browser."

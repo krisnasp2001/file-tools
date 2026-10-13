@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import * as React from "react";
 import { ToolPageLayout } from "@/components/tools/ToolPageLayout";
@@ -197,7 +197,7 @@ function ZoneBox({ zone, page, penColor, penThickness, onDragStart, onResizeStar
 }
 
 // ── Main Page ────────────────────────────────────────────────────────────────
-export function PdfSignaturePage() {
+export function PdfSignaturePage({ hideHeader }: { hideHeader?: boolean }) {
   const [files, setFiles] = React.useState<SelectedFileItem[]>([]);
   const [isRendering, setIsRendering] = React.useState(false);
   const [isProcessing, setIsProcessing] = React.useState(false);
@@ -436,7 +436,7 @@ export function PdfSignaturePage() {
   ];
 
   return (
-    <ToolPageLayout
+    <ToolPageLayout hideHeader={hideHeader}
       breadcrumbs={breadcrumbs}
       title="Sign PDF"
       description="Upload PDF, klik untuk tambah kotak TTD, gambar langsung di dalamnya. Tiap kotak bisa beda TTD."

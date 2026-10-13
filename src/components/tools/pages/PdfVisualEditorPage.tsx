@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/Button";
@@ -29,7 +29,7 @@ interface TextItemData {
   originalRects?: { pdfX: number; pdfY: number; pdfWidth: number; pdfHeight: number }[];
 }
 
-export function PdfVisualEditorPage() {
+export function PdfVisualEditorPage({ hideHeader }: { hideHeader?: boolean }) {
   const { t, formatText } = useTranslation();
   const p = t.pdfVisualEditor;
 

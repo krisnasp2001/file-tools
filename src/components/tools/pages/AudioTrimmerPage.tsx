@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import * as React from "react";
 import { ToolPageLayout } from "@/components/tools/ToolPageLayout";
@@ -18,7 +18,7 @@ import {
   ArrowRight
 } from "lucide-react";
 import { AudioWaveformEditor } from "@/components/media/AudioWaveformEditor";
-export function AudioTrimmerPage() {
+export function AudioTrimmerPage({ hideHeader }: { hideHeader?: boolean }) {
   const [files, setFiles] = React.useState<SelectedFileItem[]>([]);
   const [startTime, setStartTime] = React.useState<number>(0);
   const [endTime, setEndTime] = React.useState<number>(0);
@@ -96,7 +96,7 @@ export function AudioTrimmerPage() {
   ];
 
   return (
-    <ToolPageLayout
+    <ToolPageLayout hideHeader={hideHeader}
       breadcrumbs={breadcrumbs}
       title="Audio Trimmer"
       description="Cut and trim your audio files locally. Set start and end times to extract the exact portion you need."

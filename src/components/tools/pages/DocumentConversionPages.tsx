@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import * as React from "react";
 import { GenericDocumentConvertPage } from "./GenericDocumentConvertPage";
@@ -12,9 +12,9 @@ import * as XLSX from "xlsx";
 import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
 
 // 1. TXT to DOCX
-export function TxtToDocxPage() {
+export function TxtToDocxPage({ hideHeader }: { hideHeader?: boolean }) {
   return (
-    <GenericDocumentConvertPage
+    <GenericDocumentConvertPage hideHeader={hideHeader}
       toolSlug="txt-to-docx"
       sourceFormatName="TXT"
       targetFormatName="DOCX"
@@ -35,9 +35,9 @@ export function TxtToDocxPage() {
 }
 
 // 2. TXT to PDF
-export function TxtToPdfPage() {
+export function TxtToPdfPage({ hideHeader }: { hideHeader?: boolean }) {
   return (
-    <GenericDocumentConvertPage
+    <GenericDocumentConvertPage hideHeader={hideHeader}
       toolSlug="txt-to-pdf"
       sourceFormatName="TXT"
       targetFormatName="PDF"
@@ -100,9 +100,9 @@ export function TxtToPdfPage() {
 }
 
 // 3. TXT to HTML
-export function TxtToHtmlPage() {
+export function TxtToHtmlPage({ hideHeader }: { hideHeader?: boolean }) {
   return (
-    <GenericDocumentConvertPage
+    <GenericDocumentConvertPage hideHeader={hideHeader}
       toolSlug="txt-to-html"
       sourceFormatName="TXT"
       targetFormatName="HTML"
@@ -123,9 +123,9 @@ export function TxtToHtmlPage() {
 }
 
 // 4. TXT to RTF
-export function TxtToRtfPage() {
+export function TxtToRtfPage({ hideHeader }: { hideHeader?: boolean }) {
   return (
-    <GenericDocumentConvertPage
+    <GenericDocumentConvertPage hideHeader={hideHeader}
       toolSlug="txt-to-rtf"
       sourceFormatName="TXT"
       targetFormatName="RTF"
@@ -146,9 +146,9 @@ export function TxtToRtfPage() {
 }
 
 // 5. RTF to TXT
-export function RtfToTxtPage() {
+export function RtfToTxtPage({ hideHeader }: { hideHeader?: boolean }) {
   return (
-    <GenericDocumentConvertPage
+    <GenericDocumentConvertPage hideHeader={hideHeader}
       toolSlug="rtf-to-txt"
       sourceFormatName="RTF"
       targetFormatName="TXT"
@@ -169,9 +169,9 @@ export function RtfToTxtPage() {
 }
 
 // 6. DOCX to TXT
-export function DocxToTxtPage() {
+export function DocxToTxtPage({ hideHeader }: { hideHeader?: boolean }) {
   return (
-    <GenericDocumentConvertPage
+    <GenericDocumentConvertPage hideHeader={hideHeader}
       toolSlug="docx-to-txt"
       sourceFormatName="DOCX"
       targetFormatName="TXT"
@@ -192,9 +192,9 @@ export function DocxToTxtPage() {
 }
 
 // 7. DOCX to HTML
-export function DocxToHtmlPage() {
+export function DocxToHtmlPage({ hideHeader }: { hideHeader?: boolean }) {
   return (
-    <GenericDocumentConvertPage
+    <GenericDocumentConvertPage hideHeader={hideHeader}
       toolSlug="docx-to-html"
       sourceFormatName="DOCX"
       targetFormatName="HTML"
@@ -215,9 +215,9 @@ export function DocxToHtmlPage() {
 }
 
 // 8. ODT to TXT
-export function OdtToTxtPage() {
+export function OdtToTxtPage({ hideHeader }: { hideHeader?: boolean }) {
   return (
-    <GenericDocumentConvertPage
+    <GenericDocumentConvertPage hideHeader={hideHeader}
       toolSlug="odt-to-txt"
       sourceFormatName="ODT"
       targetFormatName="TXT"
@@ -238,9 +238,9 @@ export function OdtToTxtPage() {
 }
 
 // 9. ODT to HTML
-export function OdtToHtmlPage() {
+export function OdtToHtmlPage({ hideHeader }: { hideHeader?: boolean }) {
   return (
-    <GenericDocumentConvertPage
+    <GenericDocumentConvertPage hideHeader={hideHeader}
       toolSlug="odt-to-html"
       sourceFormatName="ODT"
       targetFormatName="HTML"
@@ -261,9 +261,9 @@ export function OdtToHtmlPage() {
 }
 
 // 10. CSV to XLSX
-export function CsvToXlsxPage() {
+export function CsvToXlsxPage({ hideHeader }: { hideHeader?: boolean }) {
   return (
-    <GenericDocumentConvertPage
+    <GenericDocumentConvertPage hideHeader={hideHeader}
       toolSlug="csv-to-xlsx"
       sourceFormatName="CSV"
       targetFormatName="XLSX"
@@ -288,9 +288,9 @@ export function CsvToXlsxPage() {
 }
 
 // 11. XLSX to CSV
-export function XlsxToCsvPage() {
+export function XlsxToCsvPage({ hideHeader }: { hideHeader?: boolean }) {
   return (
-    <GenericDocumentConvertPage
+    <GenericDocumentConvertPage hideHeader={hideHeader}
       toolSlug="xlsx-to-csv"
       sourceFormatName="XLSX"
       targetFormatName="CSV"
@@ -314,9 +314,9 @@ export function XlsxToCsvPage() {
 }
 
 // 12. CSV to JSON
-export function CsvToJsonPage() {
+export function CsvToJsonPage({ hideHeader }: { hideHeader?: boolean }) {
   return (
-    <GenericDocumentConvertPage
+    <GenericDocumentConvertPage hideHeader={hideHeader}
       toolSlug="csv-to-json"
       sourceFormatName="CSV"
       targetFormatName="JSON"
@@ -337,9 +337,9 @@ export function CsvToJsonPage() {
 }
 
 // 13. JSON to CSV
-export function JsonToCsvPage() {
+export function JsonToCsvPage({ hideHeader }: { hideHeader?: boolean }) {
   return (
-    <GenericDocumentConvertPage
+    <GenericDocumentConvertPage hideHeader={hideHeader}
       toolSlug="json-to-csv"
       sourceFormatName="JSON"
       targetFormatName="CSV"
@@ -360,9 +360,9 @@ export function JsonToCsvPage() {
 }
 
 // 14. PPTX to TXT
-export function PptxToTxtPage() {
+export function PptxToTxtPage({ hideHeader }: { hideHeader?: boolean }) {
   return (
-    <GenericDocumentConvertPage
+    <GenericDocumentConvertPage hideHeader={hideHeader}
       toolSlug="pptx-to-txt"
       sourceFormatName="PPTX"
       targetFormatName="TXT"
@@ -384,9 +384,9 @@ export function PptxToTxtPage() {
 }
 
 // 15. EPUB to TXT
-export function EpubToTxtPage() {
+export function EpubToTxtPage({ hideHeader }: { hideHeader?: boolean }) {
   return (
-    <GenericDocumentConvertPage
+    <GenericDocumentConvertPage hideHeader={hideHeader}
       toolSlug="epub-to-txt"
       sourceFormatName="EPUB"
       targetFormatName="TXT"
@@ -408,9 +408,9 @@ export function EpubToTxtPage() {
 }
 
 // 16. EPUB to HTML
-export function EpubToHtmlPage() {
+export function EpubToHtmlPage({ hideHeader }: { hideHeader?: boolean }) {
   return (
-    <GenericDocumentConvertPage
+    <GenericDocumentConvertPage hideHeader={hideHeader}
       toolSlug="epub-to-html"
       sourceFormatName="EPUB"
       targetFormatName="HTML"

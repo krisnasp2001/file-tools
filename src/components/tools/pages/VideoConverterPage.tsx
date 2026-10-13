@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import * as React from "react";
 import { ToolPageLayout } from "@/components/tools/ToolPageLayout";
@@ -84,7 +84,7 @@ const RESOLUTION_OPTIONS: {
     { id: "480p", label: "480p (SD)" },
   ];
 
-export function VideoConverterPage() {
+export function VideoConverterPage({ hideHeader }: { hideHeader?: boolean }) {
   const [files, setFiles] = React.useState<SelectedFileItem[]>([]);
   const [sourceUrl, setSourceUrl] = React.useState<string | null>(null);
   const [metadata, setMetadata] = React.useState<VideoMetadata | null>(null);
@@ -247,7 +247,7 @@ export function VideoConverterPage() {
   };
 
   return (
-    <ToolPageLayout
+    <ToolPageLayout hideHeader={hideHeader}
       breadcrumbs={BREADCRUMBS}
       title="Video Format Converter"
       description="Convert videos between MP4, WebM, and MOV directly in your browser. Hardware-accelerated WebAssembly processing with zero server uploads."

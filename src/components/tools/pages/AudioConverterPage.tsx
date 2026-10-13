@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import * as React from "react";
 import { ToolPageLayout } from "@/components/tools/ToolPageLayout";
@@ -27,7 +27,7 @@ const AUDIO_FORMATS = [
   { id: "aac", label: "AAC" },
 ];
 
-export function AudioConverterPage() {
+export function AudioConverterPage({ hideHeader }: { hideHeader?: boolean }) {
   const { t } = useTranslation();
   const m = t.mediaTools.audioConverter;
 
@@ -88,7 +88,7 @@ export function AudioConverterPage() {
   ];
 
   return (
-    <ToolPageLayout
+    <ToolPageLayout hideHeader={hideHeader}
       breadcrumbs={breadcrumbs}
       title={m.title}
       description={m.description}

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import * as React from "react";
 import { ToolPageLayout } from "@/components/tools/ToolPageLayout";
@@ -158,7 +158,7 @@ function WatermarkBox({
   );
 }
 
-export function PdfWatermarkPage() {
+export function PdfWatermarkPage({ hideHeader }: { hideHeader?: boolean }) {
   const [files, setFiles] = React.useState<SelectedFileItem[]>([]);
   const [isProcessing, setIsProcessing] = React.useState(false);
   const [isRendering, setIsRendering] = React.useState(false);
@@ -312,7 +312,7 @@ export function PdfWatermarkPage() {
   ];
 
   return (
-    <ToolPageLayout
+    <ToolPageLayout hideHeader={hideHeader}
       breadcrumbs={breadcrumbs}
       title="Add Watermark to PDF"
       description="Add a diagonal text watermark to every page of your PDF — fully private, processed in your browser."

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import * as React from "react";
 import { ToolPageLayout } from "@/components/tools/ToolPageLayout";
@@ -15,7 +15,7 @@ import {
   Upload,
 } from "lucide-react";
 
-export function JsonFormatterPage() {
+export function JsonFormatterPage({ hideHeader }: { hideHeader?: boolean }) {
   const [jsonInput, setJsonInput] = React.useState("");
   const [error, setError] = React.useState<string | null>(null);
   const [success, setSuccess] = React.useState<string | null>(null);
@@ -100,7 +100,7 @@ export function JsonFormatterPage() {
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    
+
     const reader = new FileReader();
     reader.onload = (event) => {
       const content = event.target?.result as string;
@@ -124,7 +124,7 @@ export function JsonFormatterPage() {
   ];
 
   return (
-    <ToolPageLayout
+    <ToolPageLayout hideHeader={hideHeader}
       breadcrumbs={breadcrumbs}
       title="JSON Formatter & Validator"
       description="Format, prettify, minify, and validate JSON data instantly in your browser."
@@ -148,7 +148,7 @@ export function JsonFormatterPage() {
                 className="hidden"
               />
             </div>
-            
+
             <div className="flex items-center gap-2">
               <Button
                 variant="outline"
@@ -187,7 +187,7 @@ export function JsonFormatterPage() {
                 clearMessages();
               }}
               placeholder="Paste your JSON here..."
-              className="w-full min-h-[500px] resize-y rounded-xl border border-slate-700 bg-slate-950 p-4 font-mono text-sm text-slate-300 focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500 shadow-inner"
+              className="w-full min-h-500px resize-y rounded-xl border border-slate-700 bg-slate-950 p-4 font-mono text-sm text-slate-300 focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500 shadow-inner"
               spellCheck={false}
             />
           </div>
@@ -200,9 +200,9 @@ export function JsonFormatterPage() {
               <Braces className="w-5 h-5 text-teal-400" />
               JSON Actions
             </h3>
-            
+
             <div className="flex flex-col gap-3">
-              <Button 
+              <Button
                 onClick={handleFormat}
                 className="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 justify-start gap-3 border border-slate-700"
                 disabled={!jsonInput}
@@ -210,7 +210,7 @@ export function JsonFormatterPage() {
                 <FileCode className="w-4 h-4 text-teal-400" />
                 Format / Prettify (2 spaces)
               </Button>
-              <Button 
+              <Button
                 onClick={handleMinify}
                 className="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 justify-start gap-3 border border-slate-700"
                 disabled={!jsonInput}
@@ -218,7 +218,7 @@ export function JsonFormatterPage() {
                 <Braces className="w-4 h-4 text-emerald-400" />
                 Minify (Remove whitespace)
               </Button>
-              <Button 
+              <Button
                 onClick={handleValidate}
                 className="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 justify-start gap-3 border border-slate-700"
                 disabled={!jsonInput}

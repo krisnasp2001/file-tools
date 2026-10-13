@@ -1,12 +1,12 @@
-"use client";
+﻿"use client";
 
 import * as React from "react";
 import { GenericImageConvertPage } from "./GenericImageConvertPage";
 import { GenericRasterToSvgPage } from "./GenericRasterToSvgPage";
 
-export function JpgToPngPage() {
+export function JpgToPngPage({ hideHeader }: { hideHeader?: boolean }) {
   return (
-    <GenericImageConvertPage
+    <GenericImageConvertPage hideHeader={hideHeader}
       toolSlug="jpg-to-png"
       sourceFormatName="JPG"
       targetFormatName="PNG"
@@ -17,9 +17,9 @@ export function JpgToPngPage() {
   );
 }
 
-export function PngToJpgPage() {
+export function PngToJpgPage({ hideHeader }: { hideHeader?: boolean }) {
   return (
-    <GenericImageConvertPage
+    <GenericImageConvertPage hideHeader={hideHeader}
       toolSlug="png-to-jpg"
       sourceFormatName="PNG"
       targetFormatName="JPG"
@@ -30,9 +30,9 @@ export function PngToJpgPage() {
   );
 }
 
-export function JpgToWebpPage() {
+export function JpgToWebpPage({ hideHeader }: { hideHeader?: boolean }) {
   return (
-    <GenericImageConvertPage
+    <GenericImageConvertPage hideHeader={hideHeader}
       toolSlug="jpg-to-webp"
       sourceFormatName="JPG"
       targetFormatName="WebP"
@@ -43,9 +43,9 @@ export function JpgToWebpPage() {
   );
 }
 
-export function PngToWebpPage() {
+export function PngToWebpPage({ hideHeader }: { hideHeader?: boolean }) {
   return (
-    <GenericImageConvertPage
+    <GenericImageConvertPage hideHeader={hideHeader}
       toolSlug="png-to-webp"
       sourceFormatName="PNG"
       targetFormatName="WebP"
@@ -56,9 +56,9 @@ export function PngToWebpPage() {
   );
 }
 
-export function WebpToJpgPage() {
+export function WebpToJpgPage({ hideHeader }: { hideHeader?: boolean }) {
   return (
-    <GenericImageConvertPage
+    <GenericImageConvertPage hideHeader={hideHeader}
       toolSlug="webp-to-jpg"
       sourceFormatName="WebP"
       targetFormatName="JPG"
@@ -69,9 +69,9 @@ export function WebpToJpgPage() {
   );
 }
 
-export function WebpToPngPage() {
+export function WebpToPngPage({ hideHeader }: { hideHeader?: boolean }) {
   return (
-    <GenericImageConvertPage
+    <GenericImageConvertPage hideHeader={hideHeader}
       toolSlug="webp-to-png"
       sourceFormatName="WebP"
       targetFormatName="PNG"
@@ -82,9 +82,9 @@ export function WebpToPngPage() {
   );
 }
 
-export function SvgToPngPage() {
+export function SvgToPngPage({ hideHeader }: { hideHeader?: boolean }) {
   return (
-    <GenericImageConvertPage
+    <GenericImageConvertPage hideHeader={hideHeader}
       toolSlug="svg-to-png"
       sourceFormatName="SVG"
       targetFormatName="PNG"
@@ -95,9 +95,9 @@ export function SvgToPngPage() {
   );
 }
 
-export function SvgToJpgPage() {
+export function SvgToJpgPage({ hideHeader }: { hideHeader?: boolean }) {
   return (
-    <GenericImageConvertPage
+    <GenericImageConvertPage hideHeader={hideHeader}
       toolSlug="svg-to-jpg"
       sourceFormatName="SVG"
       targetFormatName="JPG"
@@ -108,9 +108,9 @@ export function SvgToJpgPage() {
   );
 }
 
-export function SvgToWebpPage() {
+export function SvgToWebpPage({ hideHeader }: { hideHeader?: boolean }) {
   return (
-    <GenericImageConvertPage
+    <GenericImageConvertPage hideHeader={hideHeader}
       toolSlug="svg-to-webp"
       sourceFormatName="SVG"
       targetFormatName="WebP"
@@ -121,9 +121,9 @@ export function SvgToWebpPage() {
   );
 }
 
-export function HeicToJpgPage() {
+export function HeicToJpgPage({ hideHeader }: { hideHeader?: boolean }) {
   return (
-    <GenericImageConvertPage
+    <GenericImageConvertPage hideHeader={hideHeader}
       toolSlug="heic-to-jpg"
       sourceFormatName="HEIC"
       targetFormatName="JPG"
@@ -134,9 +134,9 @@ export function HeicToJpgPage() {
   );
 }
 
-export function HeicToPngPage() {
+export function HeicToPngPage({ hideHeader }: { hideHeader?: boolean }) {
   return (
-    <GenericImageConvertPage
+    <GenericImageConvertPage hideHeader={hideHeader}
       toolSlug="heic-to-png"
       sourceFormatName="HEIC"
       targetFormatName="PNG"
@@ -147,9 +147,9 @@ export function HeicToPngPage() {
   );
 }
 
-export function HeicToWebpPage() {
+export function HeicToWebpPage({ hideHeader }: { hideHeader?: boolean }) {
   return (
-    <GenericImageConvertPage
+    <GenericImageConvertPage hideHeader={hideHeader}
       toolSlug="heic-to-webp"
       sourceFormatName="HEIC"
       targetFormatName="WebP"
@@ -162,9 +162,9 @@ export function HeicToWebpPage() {
 
 // ─── Raster to SVG Converters ──────────────────────────────────────────────────
 
-export function JpgToSvgPage() {
+export function JpgToSvgPage({ hideHeader }: { hideHeader?: boolean }) {
   return (
-    <GenericRasterToSvgPage
+    <GenericRasterToSvgPage hideHeader={hideHeader}
       toolSlug="jpg-to-svg"
       sourceFormatName="JPG"
       accept={[".jpg", ".jpeg", "image/jpeg"]}
@@ -173,9 +173,9 @@ export function JpgToSvgPage() {
   );
 }
 
-export function PngToSvgPage() {
+export function PngToSvgPage({ hideHeader }: { hideHeader?: boolean }) {
   return (
-    <GenericRasterToSvgPage
+    <GenericRasterToSvgPage hideHeader={hideHeader}
       toolSlug="png-to-svg"
       sourceFormatName="PNG"
       accept={[".png", "image/png"]}
@@ -184,9 +184,9 @@ export function PngToSvgPage() {
   );
 }
 
-export function WebpToSvgPage() {
+export function WebpToSvgPage({ hideHeader }: { hideHeader?: boolean }) {
   return (
-    <GenericRasterToSvgPage
+    <GenericRasterToSvgPage hideHeader={hideHeader}
       toolSlug="webp-to-svg"
       sourceFormatName="WebP"
       accept={[".webp", "image/webp"]}
@@ -195,9 +195,9 @@ export function WebpToSvgPage() {
   );
 }
 
-export function HeicToSvgPage() {
+export function HeicToSvgPage({ hideHeader }: { hideHeader?: boolean }) {
   return (
-    <GenericRasterToSvgPage
+    <GenericRasterToSvgPage hideHeader={hideHeader}
       toolSlug="heic-to-svg"
       sourceFormatName="HEIC"
       accept={[".heic", ".heif", "image/heic", "image/heif"]}

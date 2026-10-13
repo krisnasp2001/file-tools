@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import * as React from "react";
 import { ToolPageLayout } from "@/components/tools/ToolPageLayout";
@@ -34,6 +34,7 @@ export interface GenericPdfExtractPageProps {
   targetFormat: PdfExtractionTarget;
   description: string;
   disclaimerNote: string;
+  hideHeader?: boolean;
 }
 
 export function GenericPdfExtractPage({
@@ -42,7 +43,7 @@ export function GenericPdfExtractPage({
   targetFormat,
   description,
   disclaimerNote,
-}: GenericPdfExtractPageProps) {
+  hideHeader,}: GenericPdfExtractPageProps) {
   const [files, setFiles] = React.useState<SelectedFileItem[]>([]);
   const [isProcessing, setIsProcessing] = React.useState(false);
   const [extraction, setExtraction] = React.useState<PdfTextExtractionResult | null>(null);
@@ -146,7 +147,7 @@ export function GenericPdfExtractPage({
   ];
 
   return (
-    <ToolPageLayout
+    <ToolPageLayout hideHeader={hideHeader}
       breadcrumbs={breadcrumbs}
       title={`PDF to ${targetFormatName}`}
       description={description}
@@ -321,9 +322,9 @@ export function GenericPdfExtractPage({
 }
 
 // 1. PDF to TXT
-export function PdfToTxtPage() {
+export function PdfToTxtPage({ hideHeader }: { hideHeader?: boolean }) {
   return (
-    <GenericPdfExtractPage
+    <GenericPdfExtractPage hideHeader={hideHeader}
       toolSlug="pdf-to-txt"
       targetFormatName="TXT"
       targetFormat="txt"
@@ -336,9 +337,9 @@ export function PdfToTxtPage() {
 
 
 // 2. PDF to DOCX
-export function PdfToDocxPage() {
+export function PdfToDocxPage({ hideHeader }: { hideHeader?: boolean }) {
   return (
-    <GenericPdfExtractPage
+    <GenericPdfExtractPage hideHeader={hideHeader}
       toolSlug="pdf-to-docx"
       targetFormatName="DOCX"
       targetFormat="docx"
@@ -349,9 +350,9 @@ export function PdfToDocxPage() {
 }
 
 
-export function PdfToCsvPage() {
+export function PdfToCsvPage({ hideHeader }: { hideHeader?: boolean }) {
   return (
-    <GenericPdfExtractPage
+    <GenericPdfExtractPage hideHeader={hideHeader}
       toolSlug="pdf-to-csv"
       targetFormatName="CSV"
       targetFormat="csv"
@@ -362,9 +363,9 @@ export function PdfToCsvPage() {
 }
 
 // 4. PDF to XLSX
-export function PdfToXlsxPage() {
+export function PdfToXlsxPage({ hideHeader }: { hideHeader?: boolean }) {
   return (
-    <GenericPdfExtractPage
+    <GenericPdfExtractPage hideHeader={hideHeader}
       toolSlug="pdf-to-xlsx"
       targetFormatName="XLSX"
       targetFormat="xlsx"
@@ -375,9 +376,9 @@ export function PdfToXlsxPage() {
 }
 
 // 5. PDF to PPTX
-export function PdfToPptxPage() {
+export function PdfToPptxPage({ hideHeader }: { hideHeader?: boolean }) {
   return (
-    <GenericPdfExtractPage
+    <GenericPdfExtractPage hideHeader={hideHeader}
       toolSlug="pdf-to-pptx"
       targetFormatName="PPTX"
       targetFormat="pptx"

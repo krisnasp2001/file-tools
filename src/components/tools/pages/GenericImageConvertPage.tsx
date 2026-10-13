@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import * as React from "react";
 import { ToolPageLayout } from "@/components/tools/ToolPageLayout";
@@ -30,6 +30,7 @@ export interface GenericImageConvertPageProps {
   accept: string[];
   maxSizeBytes?: number;
   description: string;
+  hideHeader?: boolean;
 }
 
 export function GenericImageConvertPage({
@@ -40,7 +41,7 @@ export function GenericImageConvertPage({
   accept,
   maxSizeBytes = 30 * 1024 * 1024, // 30 MB default safe limit
   description,
-}: GenericImageConvertPageProps) {
+  hideHeader,}: GenericImageConvertPageProps) {
   const [files, setFiles] = React.useState<SelectedFileItem[]>([]);
   const [dimensions, setDimensions] = React.useState<ImageDimensions | null>(null);
   const [isReadingDims, setIsReadingDims] = React.useState(false);
@@ -167,7 +168,7 @@ export function GenericImageConvertPage({
     !conversionResult;
 
   return (
-    <ToolPageLayout
+    <ToolPageLayout hideHeader={hideHeader}
       breadcrumbs={breadcrumbs}
       title={`${sourceFormatName} to ${targetFormatName}`}
       description={description}

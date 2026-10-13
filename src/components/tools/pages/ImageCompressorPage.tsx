@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import * as React from "react";
 import { ToolPageLayout } from "@/components/tools/ToolPageLayout";
@@ -21,7 +21,7 @@ import {
   Zap,
 } from "lucide-react";
 
-export function ImageCompressorPage() {
+export function ImageCompressorPage({ hideHeader }: { hideHeader?: boolean }) {
   const [files, setFiles] = React.useState<SelectedFileItem[]>([]);
   const [dimensions, setDimensions] = React.useState<ImageDimensions | null>(null);
   const [isReadingDims, setIsReadingDims] = React.useState(false);
@@ -152,7 +152,7 @@ export function ImageCompressorPage() {
     !result;
 
   return (
-    <ToolPageLayout
+    <ToolPageLayout hideHeader={hideHeader}
       breadcrumbs={breadcrumbs}
       title="Image Compressor"
       description="Compress JPEG, PNG, and WebP images directly in your browser with smart lossy and lossless modes."

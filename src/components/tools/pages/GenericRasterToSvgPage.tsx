@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import * as React from "react";
 import { ToolPageLayout } from "@/components/tools/ToolPageLayout";
@@ -27,6 +27,7 @@ export interface GenericRasterToSvgPageProps {
   accept: string[];
   maxSizeBytes?: number;
   description: string;
+  hideHeader?: boolean;
 }
 
 export function GenericRasterToSvgPage({
@@ -35,7 +36,7 @@ export function GenericRasterToSvgPage({
   accept,
   maxSizeBytes = 30 * 1024 * 1024,
   description,
-}: GenericRasterToSvgPageProps) {
+  hideHeader, }: GenericRasterToSvgPageProps) {
   const [files, setFiles] = React.useState<SelectedFileItem[]>([]);
   const [dimensions, setDimensions] = React.useState<ImageDimensions | null>(null);
   const [isReadingDims, setIsReadingDims] = React.useState(false);
@@ -165,7 +166,7 @@ export function GenericRasterToSvgPage({
     !conversionResult;
 
   return (
-    <ToolPageLayout
+    <ToolPageLayout hideHeader={hideHeader}
       breadcrumbs={breadcrumbs}
       title={`${sourceFormatName} to SVG`}
       description={description}
@@ -215,7 +216,7 @@ export function GenericRasterToSvgPage({
                   </div>
 
                   {resultPreviewUrl && (
-                    <div className="relative flex aspect-video max-h-[360px] w-full items-center justify-center overflow-hidden rounded-lg bg-neutral-100 dark:bg-neutral-900">
+                    <div className="relative flex aspect-video max-h-360px w-full items-center justify-center overflow-hidden rounded-lg bg-neutral-100 dark:bg-neutral-900">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={resultPreviewUrl}
@@ -293,19 +294,17 @@ export function GenericRasterToSvgPage({
                 <button
                   type="button"
                   onClick={() => setVectorMode("vectorize")}
-                  className={`rounded-lg border p-2.5 text-left text-xs transition-colors ${
-                    vectorMode === "vectorize"
+                  className={`rounded-lg border p-2.5 text-left text-xs transition-colors ${vectorMode === "vectorize"
                       ? "border-neutral-900 bg-neutral-900 text-white dark:border-neutral-100 dark:bg-neutral-100 dark:text-neutral-900"
                       : "border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-300"
-                  }`}
+                    }`}
                 >
                   <div className="font-semibold">Vector Tracing</div>
                   <div
-                    className={`mt-0.5 text-[10px] ${
-                      vectorMode === "vectorize"
+                    className={`mt-0.5 text-[10px] ${vectorMode === "vectorize"
                         ? "text-neutral-300 dark:text-neutral-600"
                         : "text-neutral-400"
-                    }`}
+                      }`}
                   >
                     Color-quantized paths
                   </div>
@@ -314,19 +313,17 @@ export function GenericRasterToSvgPage({
                 <button
                   type="button"
                   onClick={() => setVectorMode("embed")}
-                  className={`rounded-lg border p-2.5 text-left text-xs transition-colors ${
-                    vectorMode === "embed"
+                  className={`rounded-lg border p-2.5 text-left text-xs transition-colors ${vectorMode === "embed"
                       ? "border-neutral-900 bg-neutral-900 text-white dark:border-neutral-100 dark:bg-neutral-100 dark:text-neutral-900"
                       : "border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-300"
-                  }`}
+                    }`}
                 >
                   <div className="font-semibold">Hi-Fi Container</div>
                   <div
-                    className={`mt-0.5 text-[10px] ${
-                      vectorMode === "embed"
+                    className={`mt-0.5 text-[10px] ${vectorMode === "embed"
                         ? "text-neutral-300 dark:text-neutral-600"
                         : "text-neutral-400"
-                    }`}
+                      }`}
                   >
                     Embedded XML image
                   </div>

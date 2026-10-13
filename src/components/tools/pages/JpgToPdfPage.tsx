@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import * as React from "react";
 import { ToolPageLayout } from "@/components/tools/ToolPageLayout";
@@ -45,7 +45,7 @@ const MARGIN_OPTIONS = [
   { value: 20, label: "20mm margin" },
 ];
 
-export function JpgToPdfPage() {
+export function JpgToPdfPage({ hideHeader }: { hideHeader?: boolean }) {
   const [files, setFiles] = React.useState<SelectedFileItem[]>([]);
   const [config, setConfig] = React.useState<ImageToPdfConfig>(DEFAULT_IMAGE_TO_PDF_CONFIG);
 
@@ -89,7 +89,7 @@ export function JpgToPdfPage() {
   const validFiles = files.filter((f) => f.status === "ready");
 
   return (
-    <ToolPageLayout
+    <ToolPageLayout hideHeader={hideHeader}
       breadcrumbs={BREADCRUMBS}
       title={tool.name}
       description={tool.description}

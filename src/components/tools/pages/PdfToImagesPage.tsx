@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import * as React from "react";
 import { ToolPageLayout } from "@/components/tools/ToolPageLayout";
@@ -23,7 +23,7 @@ const BREADCRUMBS = [
 
 type RenderState = "idle" | "loading" | "ready" | "error";
 
-export function PdfToImagesPage() {
+export function PdfToImagesPage({ hideHeader }: { hideHeader?: boolean }) {
   const [files, setFiles] = React.useState<SelectedFileItem[]>([]);
   const [pages, setPages] = React.useState<PdfPageCardData[]>([]);
   const [renderState, setRenderState] = React.useState<RenderState>("idle");
@@ -141,7 +141,7 @@ export function PdfToImagesPage() {
   const canConvert = validFiles.length > 0 && renderState === "ready" && pages.length > 0;
 
   return (
-    <ToolPageLayout
+    <ToolPageLayout hideHeader={hideHeader}
       breadcrumbs={BREADCRUMBS}
       title={tool.name}
       description={tool.description}

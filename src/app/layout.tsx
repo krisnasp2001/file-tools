@@ -38,6 +38,9 @@ export const metadata: Metadata = {
   authors: [{ name: "File Tools" }],
   creator: "File Tools",
   publisher: "File Tools",
+  verification: {
+    google: "b6tj8qPu0UidXmdKF5GBkOD3GqjRsP5IQrGAoldktwI",
+  },
   robots: {
     index: true,
     follow: true,

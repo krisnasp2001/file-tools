@@ -68,6 +68,8 @@ interface ZoneBoxProps {
   onSelect: () => void;
   registerPad: (id: string, pad: import("signature_pad").default | null) => void;
   onSignatureChange: (id: string, hasDrawing: boolean) => void;
+  /** fraction 0–1: how far down from the top of the page this zone starts */
+  topFraction: number;
 }
 
 let globalZoneCounter = 0;
@@ -76,17 +78,22 @@ function getNextZoneId(pageIndex: number): string {
   return `z-${pageIndex}-${globalZoneCounter}`;
 }
 
-function ZoneBox({ zone, page, penColor, penThickness, isSelected, onPointerDownDrag, onPointerDownResize, onRemove, onSelect, registerPad, onSignatureChange }: ZoneBoxProps) {
+function ZoneBox({ zone, page, penColor, penThickness, isSelected, onPointerDownDrag, onPointerDownResize, onRemove, onSelect, registerPad, onSignatureChange, topFraction }: ZoneBoxProps) {
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
   const padRef = React.useRef<import("signature_pad").default | null>(null);
   const [isEmpty, setIsEmpty] = React.useState(true);
+  // If zone is in the top 20% of the page, flip toolbar below the box
+  const toolbarBelow = topFraction < 0.20;
 
   const left = `${(zone.pdfX / page.pdfWidth) * 100}%`;
   const top = `${((page.pdfHeight - (zone.pdfY + zone.pdfH)) / page.pdfHeight) * 100}%`;
   const width = `${(zone.pdfW / page.pdfWidth) * 100}%`;
   const height = `${(zone.pdfH / page.pdfHeight) * 100}%`;
 
-  // Init SignaturePad
+  // Detect coarse pointer (touch) for optimised settings
+  const isTouchDevice = typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches;
+
+  // Init SignaturePad with mobile-optimised settings
   React.useEffect(() => {
     let sp: import("signature_pad").default | null = null;
     async function init() {
@@ -97,8 +104,10 @@ function ZoneBox({ zone, page, penColor, penThickness, isSelected, onPointerDown
         penColor,
         minWidth: penThickness * 0.5,
         maxWidth: penThickness * 1.5,
-        minDistance: 7,
-        velocityFilterWeight: 0.5,
+        // Mobile: lower values = less lag, smoother curve
+        minDistance: isTouchDevice ? 1 : 5,
+        velocityFilterWeight: isTouchDevice ? 0.1 : 0.4,
+        throttle: isTouchDevice ? 8 : 16,
       });
       sp.addEventListener("endStroke", () => {
         const empty = sp?.isEmpty() ?? true;
@@ -106,9 +115,10 @@ function ZoneBox({ zone, page, penColor, penThickness, isSelected, onPointerDown
         onSignatureChange(zone.id, !empty);
       });
       const c = canvasRef.current;
-      c.width = c.offsetWidth * 2;
-      c.height = c.offsetHeight * 2;
-      c.getContext("2d")?.scale(2, 2);
+      const dpr = window.devicePixelRatio || 1;
+      c.width = c.offsetWidth * dpr;
+      c.height = c.offsetHeight * dpr;
+      c.getContext("2d")?.scale(dpr, dpr);
       sp.clear();
       padRef.current = sp;
       registerPad(zone.id, sp);
@@ -133,92 +143,87 @@ function ZoneBox({ zone, page, penColor, penThickness, isSelected, onPointerDown
     onSignatureChange(zone.id, false);
   };
 
-  const showToolbar = isSelected || true; // always show on mobile, group-hover on desktop
-
   return (
     <div
       style={{ position: "absolute", left, top, width, height, zIndex: isSelected ? 20 : 10 }}
       className="group"
       onPointerDown={(e) => { if ((e.target as HTMLElement).closest(".zone-handle")) return; onSelect(); }}
     >
-      {/* Drag handle — enlarged for touch */}
+      {/* Dashed border — thicker & brighter when selected */}
+      <div className={`absolute inset-0 border-2 border-dashed pointer-events-none rounded-sm transition-colors ${
+        isSelected ? "border-sky-400 bg-sky-500/10" : "border-sky-500/70 bg-sky-500/5"
+      }`} />
+
+      {/* ── DRAG HANDLE: inside top-left, always within box bounds ── */}
       <div
-        className="zone-handle absolute -top-5 -left-5 w-11 h-11 flex items-center justify-center bg-white border-2 border-sky-500 rounded-full shadow-lg text-sky-500 cursor-move z-30 hover:bg-sky-50 active:bg-sky-100 transition-colors"
+        className={`zone-handle absolute top-0 left-0 w-10 h-10 flex items-center justify-center rounded-br-lg transition-colors cursor-move z-30 ${
+          isSelected
+            ? "bg-sky-500 text-white shadow-md"
+            : "bg-sky-500/20 text-sky-400 hover:bg-sky-500 hover:text-white"
+        }`}
         onPointerDown={(e) => { e.stopPropagation(); onPointerDownDrag(e); }}
         style={{ touchAction: "none" }}
-        title="Move Box"
+        title="Geser kotak"
       >
         <Move className="w-4 h-4" />
       </div>
-      {/* Dashed border */}
-      <div className={`absolute inset-0 border-2 border-dashed pointer-events-none ${isSelected ? "border-sky-400 bg-sky-500/10" : "border-sky-500 bg-sky-500/5"}`} />
 
-      {/* 4 Corners */}
-      <div className="absolute -top-1.5 -left-1.5 w-3 h-3 bg-white border border-sky-500 pointer-events-none" />
-      <div className="absolute -top-1.5 -right-1.5 w-3 h-3 bg-white border border-sky-500 pointer-events-none" />
-      <div className="absolute -bottom-1.5 -left-1.5 w-3 h-3 bg-white border border-sky-500 pointer-events-none" />
-
-      {/* Resize handle — enlarged for touch */}
+      {/* ── RESIZE HANDLE: inside bottom-right ── */}
       <div
-        className="zone-handle absolute -bottom-5 -right-5 w-11 h-11 flex items-center justify-center cursor-se-resize z-20"
+        className="zone-handle absolute bottom-0 right-0 w-10 h-10 flex items-center justify-center rounded-tl-lg cursor-se-resize z-20 bg-sky-500/20 hover:bg-sky-500 transition-colors"
         onPointerDown={(e) => { e.stopPropagation(); onPointerDownResize(e); }}
         style={{ touchAction: "none" }}
-        title="Resize"
+        title="Ubah ukuran"
       >
-        <div className="w-4 h-4 bg-sky-500 shadow-sm rounded-sm" />
+        <svg className="w-4 h-4 text-sky-400" viewBox="0 0 16 16" fill="currentColor">
+          <path d="M14 10l-4 4h4v-4zM10 14H6l8-8v4l-4 4zM2 14l12-12H10L2 10v4z" opacity=".4"/>
+          <path d="M10 14H6l8-8v4l-4 4z"/>
+        </svg>
       </div>
 
-      {/* Floating Toolbar — always visible on mobile, hover on desktop */}
-      {showToolbar && (
-        <div className="zone-handle absolute -top-9 right-0 flex items-center gap-1 z-30 opacity-0 group-hover:opacity-100 sm:group-hover:opacity-100 pointer-fine:opacity-0 pointer-coarse:opacity-100 transition-opacity">
-          {!isEmpty && (
-            <button
-              onPointerDown={(e) => { e.stopPropagation(); handleClear(e); }}
-              className="w-8 h-8 flex items-center justify-center rounded-md bg-white shadow border border-slate-200 text-slate-500 hover:text-red-500 hover:bg-slate-50 transition-colors"
-            >
-              <Trash2 className="w-4 h-4" />
-            </button>
-          )}
+      {/* ── UNIFIED TOOLBAR: flips below zone if near top of page ── */}
+      <div
+        className={`zone-handle absolute right-0 flex items-center gap-1 z-30 transition-all ${
+          toolbarBelow ? "top-full mt-1" : "-top-9"
+        } ${
+          isSelected ? "opacity-100 scale-100" : "opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100"
+        }`}
+      >
+        {!isEmpty && (
           <button
-            onPointerDown={(e) => { e.stopPropagation(); e.preventDefault(); onRemove(); }}
-            className="w-8 h-8 flex items-center justify-center rounded-md bg-white shadow border border-slate-200 text-slate-500 hover:text-red-500 hover:bg-slate-50 transition-colors"
+            onPointerDown={(e) => { e.stopPropagation(); handleClear(e); }}
+            onTouchEnd={(e) => { e.stopPropagation(); e.preventDefault(); }}
+            onClick={(e) => e.stopPropagation()}
+            className="zone-handle w-9 h-9 flex items-center justify-center rounded-lg bg-white shadow-md border border-slate-200 text-slate-500 hover:text-red-500 active:text-red-500 active:bg-red-50 hover:bg-slate-50 transition-colors"
+            title="Hapus TTD"
           >
-            <X className="w-4 h-4" />
+            <Trash2 className="w-4 h-4" />
           </button>
-        </div>
-      )}
+        )}
+        <button
+          onPointerDown={(e) => { e.stopPropagation(); e.preventDefault(); onRemove(); }}
+          onTouchEnd={(e) => { e.stopPropagation(); e.preventDefault(); }}
+          onClick={(e) => e.stopPropagation()}
+          className="zone-handle w-9 h-9 flex items-center justify-center rounded-lg bg-white shadow-md border border-slate-200 text-slate-500 hover:text-red-500 active:text-red-500 active:bg-red-50 hover:bg-slate-50 transition-colors"
+          title="Hapus Kotak"
+        >
+          <X className="w-4 h-4" />
+        </button>
+      </div>
 
-      {/* Delete/Clear buttons shown when selected (for mobile) */}
-      {isSelected && (
-        <div className="zone-handle absolute -top-9 right-0 flex items-center gap-1 z-30">
-          {!isEmpty && (
-            <button
-              onPointerDown={(e) => { e.stopPropagation(); handleClear(e); }}
-              className="w-8 h-8 flex items-center justify-center rounded-md bg-white shadow border border-slate-200 text-slate-500 active:text-red-500 transition-colors"
-            >
-              <Trash2 className="w-4 h-4" />
-            </button>
-          )}
-          <button
-            onPointerDown={(e) => { e.stopPropagation(); e.preventDefault(); onRemove(); }}
-            className="w-8 h-8 flex items-center justify-center rounded-md bg-white shadow border border-slate-200 text-slate-500 active:text-red-500 transition-colors"
-          >
-            <X className="w-4 h-4" />
-          </button>
-        </div>
-      )}
-
-      {/* Drawing canvas */}
-      <div className="relative flex-1 w-full h-full">
+      {/* ── DRAWING CANVAS ── */}
+      {/* Top-left and bottom-right are occupied by handles; canvas fills the rest */}
+      <div className="absolute inset-0 w-full h-full">
         <canvas
           ref={canvasRef}
           className="w-full h-full touch-none block"
           onPointerDown={(e) => e.stopPropagation()}
+          onClick={(e) => e.stopPropagation()}
         />
         {isEmpty && (
           <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none text-sky-500/50">
-            <PenLine className="w-6 h-6 mb-1" />
-            <span className="text-[10px] font-medium uppercase tracking-wider">Tanda Tangan</span>
+            <PenLine className="w-5 h-5 mb-1" />
+            <span className="text-[9px] sm:text-[10px] font-medium uppercase tracking-wider">Tanda Tangan</span>
           </div>
         )}
       </div>
@@ -235,7 +240,7 @@ export function PdfSignaturePage({ hideHeader }: { hideHeader?: boolean }) {
   const [result, setResult] = React.useState<{ data: Blob; fileName: string } | null>(null);
   const [renderedPages, setRenderedPages] = React.useState<RenderedPage[]>([]);
   const [zones, setZones] = React.useState<SignatureZone[]>([]);
-  const [sigSizePct, setSigSizePct] = React.useState(22);
+  const [sigSizePct, setSigSizePct] = React.useState(18); // smaller default fits portrait better
   const [selectedZoneId, setSelectedZoneId] = React.useState<string | null>(null);
 
   // Pen settings (global, synced to all zone pads)
@@ -627,12 +632,13 @@ export function PdfSignaturePage({ hideHeader }: { hideHeader?: boolean }) {
                       <div className="px-4 py-2 border-b border-slate-800 flex items-center justify-between text-xs">
                         <span className="font-medium text-slate-300">Halaman {idx + 1}</span>
                         <span className="text-slate-500">
-                          {pageZones.length > 0 ? `${pageZones.length} kotak · klik untuk tambah` : "Klik untuk tambah kotak TTD"}
+                          {pageZones.length > 0 ? `${pageZones.length} kotak · tap untuk tambah` : "Tap halaman untuk tambah kotak TTD"}
                         </span>
                       </div>
+                      {/* overflow-visible so toolbar/handles never get clipped by the card edge */}
                       <div
                         ref={(el) => { pageContainerRefs.current[idx] = el; }}
-                        className="relative cursor-crosshair w-full select-none"
+                        className="relative cursor-crosshair w-full select-none overflow-visible"
                         style={{ aspectRatio: `${pg.pdfWidth} / ${pg.pdfHeight}` }}
                         onClick={(e) => handlePageClick(e, idx)}
                       >
@@ -652,6 +658,7 @@ export function PdfSignaturePage({ hideHeader }: { hideHeader?: boolean }) {
                             onSelect={() => setSelectedZoneId(zone.id)}
                             registerPad={registerPad}
                             onSignatureChange={onSignatureChange}
+                            topFraction={(pg.pdfHeight - (zone.pdfY + zone.pdfH)) / pg.pdfHeight}
                           />
                         ))}
                       </div>

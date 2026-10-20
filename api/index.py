@@ -1,12 +1,25 @@
 import os
+import sys
 import tempfile
 import uuid
+
+# Ensure api directory is in sys.path for both local execution and Vercel serverless
+api_dir = os.path.dirname(os.path.abspath(__file__))
+if api_dir not in sys.path:
+    sys.path.insert(0, api_dir)
+
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 
 # Import local convert function
-from convert_pdf_to_docx import convert
+try:
+    from convert_pdf_to_docx import convert
+except ImportError:
+    try:
+        from .convert_pdf_to_docx import convert
+    except ImportError:
+        from api.convert_pdf_to_docx import convert
 
 app = FastAPI(title="PDF to DOCX Converter on Vercel")
 

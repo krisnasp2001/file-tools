@@ -92,12 +92,33 @@ export function GenericPdfExtractPage({
             setOcrProgress("Analyzing document layout & reconstructing columns...");
             const formData = new FormData();
             formData.append("file", currentFile);
-            const response = await fetch("/api/convert/pdf-to-docx", {
-              method: "POST",
-              body: formData,
-            });
 
-            if (response.ok) {
+            // 1. First, call Vercel Python Serverless endpoint directly (/api/py/convert)
+            let response: Response | null = null;
+            try {
+              const pyRes = await fetch("/api/py/convert", {
+                method: "POST",
+                body: formData,
+              });
+              if (pyRes.ok) {
+                response = pyRes;
+              }
+            } catch {
+              // fallback to Node route
+            }
+
+            // 2. If direct Python route is not available (e.g. local dev), call Node API route
+            if (!response || !response.ok) {
+              const nodeRes = await fetch("/api/convert/pdf-to-docx", {
+                method: "POST",
+                body: formData,
+              });
+              if (nodeRes.ok) {
+                response = nodeRes;
+              }
+            }
+
+            if (response && response.ok) {
               resultData = await response.blob();
               outName = `${baseName}.docx`;
               break;

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import * as React from "react";
 import { ToolPageLayout } from "@/components/tools/ToolPageLayout";
@@ -8,7 +8,8 @@ import { SelectedFileItem } from "@/lib/file/types";
 import { downloadBlob } from "@/lib/download/download";
 import {
   Loader2, Download, RotateCcw, CheckCircle2, AlertTriangle,
-  PenLine, Trash2, X, Info, Move
+  PenLine, Trash2, X, Info, Move,
+  ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Plus, Minus
 } from "lucide-react";
 import { PDFDocument } from "pdf-lib";
 
@@ -60,9 +61,11 @@ interface ZoneBoxProps {
   page: RenderedPage;
   penColor: string;
   penThickness: number;
-  onDragStart: (e: React.MouseEvent) => void;
-  onResizeStart: (e: React.MouseEvent) => void;
+  isSelected: boolean;
+  onPointerDownDrag: (e: React.PointerEvent) => void;
+  onPointerDownResize: (e: React.PointerEvent) => void;
   onRemove: () => void;
+  onSelect: () => void;
   registerPad: (id: string, pad: import("signature_pad").default | null) => void;
   onSignatureChange: (id: string, hasDrawing: boolean) => void;
 }
@@ -73,7 +76,7 @@ function getNextZoneId(pageIndex: number): string {
   return `z-${pageIndex}-${globalZoneCounter}`;
 }
 
-function ZoneBox({ zone, page, penColor, penThickness, onDragStart, onResizeStart, onRemove, registerPad, onSignatureChange }: ZoneBoxProps) {
+function ZoneBox({ zone, page, penColor, penThickness, isSelected, onPointerDownDrag, onPointerDownResize, onRemove, onSelect, registerPad, onSignatureChange }: ZoneBoxProps) {
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
   const padRef = React.useRef<import("signature_pad").default | null>(null);
   const [isEmpty, setIsEmpty] = React.useState(true);
@@ -94,7 +97,7 @@ function ZoneBox({ zone, page, penColor, penThickness, onDragStart, onResizeStar
         penColor,
         minWidth: penThickness * 0.5,
         maxWidth: penThickness * 1.5,
-        minDistance: 7, // Dikurangi sensitivitasnya
+        minDistance: 7,
         velocityFilterWeight: 0.5,
       });
       sp.addEventListener("endStroke", () => {
@@ -115,7 +118,7 @@ function ZoneBox({ zone, page, penColor, penThickness, onDragStart, onResizeStar
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [zone.id]);
 
-  // Sync pen settings when they change globally (without clearing the canvas)
+  // Sync pen settings
   React.useEffect(() => {
     if (!padRef.current) return;
     padRef.current.penColor = penColor;
@@ -123,67 +126,94 @@ function ZoneBox({ zone, page, penColor, penThickness, onDragStart, onResizeStar
     padRef.current.maxWidth = penThickness * 1.5;
   }, [penColor, penThickness]);
 
-  const handleClear = (e: React.MouseEvent) => {
+  const handleClear = (e: React.PointerEvent) => {
     e.stopPropagation();
     padRef.current?.clear();
     setIsEmpty(true);
     onSignatureChange(zone.id, false);
   };
 
+  const showToolbar = isSelected || true; // always show on mobile, group-hover on desktop
+
   return (
     <div
-      style={{ position: "absolute", left, top, width, height, zIndex: 10 }}
+      style={{ position: "absolute", left, top, width, height, zIndex: isSelected ? 20 : 10 }}
       className="group"
-      onClick={(e) => e.stopPropagation()}
+      onPointerDown={(e) => { if ((e.target as HTMLElement).closest(".zone-handle")) return; onSelect(); }}
     >
-      {/* Explicit Drag handle */}
+      {/* Drag handle — enlarged for touch */}
       <div
-        className="absolute -top-3 -left-3 w-7 h-7 flex items-center justify-center bg-white border border-sky-500 rounded-full shadow-md text-sky-500 cursor-move z-30 hover:bg-sky-50 transition-colors opacity-80 group-hover:opacity-100"
-        onMouseDown={onDragStart}
+        className="zone-handle absolute -top-5 -left-5 w-11 h-11 flex items-center justify-center bg-white border-2 border-sky-500 rounded-full shadow-lg text-sky-500 cursor-move z-30 hover:bg-sky-50 active:bg-sky-100 transition-colors"
+        onPointerDown={(e) => { e.stopPropagation(); onPointerDownDrag(e); }}
+        style={{ touchAction: "none" }}
         title="Move Box"
       >
-        <Move className="w-3.5 h-3.5" />
+        <Move className="w-4 h-4" />
       </div>
-      {/* Dashed border like Ctrl+T transform */}
-      <div className="absolute inset-0 border-2 border-dashed border-sky-500 bg-sky-500/5 pointer-events-none" />
+      {/* Dashed border */}
+      <div className={`absolute inset-0 border-2 border-dashed pointer-events-none ${isSelected ? "border-sky-400 bg-sky-500/10" : "border-sky-500 bg-sky-500/5"}`} />
 
       {/* 4 Corners */}
       <div className="absolute -top-1.5 -left-1.5 w-3 h-3 bg-white border border-sky-500 pointer-events-none" />
       <div className="absolute -top-1.5 -right-1.5 w-3 h-3 bg-white border border-sky-500 pointer-events-none" />
       <div className="absolute -bottom-1.5 -left-1.5 w-3 h-3 bg-white border border-sky-500 pointer-events-none" />
 
-      {/* Resize handle — bottom-right */}
+      {/* Resize handle — enlarged for touch */}
       <div
-        className="absolute -bottom-1.5 -right-1.5 w-3 h-3 bg-sky-500 cursor-se-resize shadow-sm z-20"
-        onMouseDown={(e) => { e.stopPropagation(); onResizeStart(e); }}
-      />
-
-      {/* Floating Toolbar */}
-      <div className="absolute -top-8 right-0 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-30">
-        {!isEmpty && (
-          <button
-            onMouseDown={(e) => e.stopPropagation()}
-            onClick={handleClear}
-            className="w-7 h-7 flex items-center justify-center rounded-md bg-white shadow border border-slate-200 text-slate-500 hover:text-red-500 hover:bg-slate-50 transition-colors"
-          >
-            <Trash2 className="w-4 h-4" />
-          </button>
-        )}
-        <button
-          onMouseDown={(e) => e.stopPropagation()}
-          onClick={(e) => { e.stopPropagation(); onRemove(); }}
-          className="w-7 h-7 flex items-center justify-center rounded-md bg-white shadow border border-slate-200 text-slate-500 hover:text-red-500 hover:bg-slate-50 transition-colors"
-        >
-          <X className="w-4 h-4" />
-        </button>
+        className="zone-handle absolute -bottom-5 -right-5 w-11 h-11 flex items-center justify-center cursor-se-resize z-20"
+        onPointerDown={(e) => { e.stopPropagation(); onPointerDownResize(e); }}
+        style={{ touchAction: "none" }}
+        title="Resize"
+      >
+        <div className="w-4 h-4 bg-sky-500 shadow-sm rounded-sm" />
       </div>
+
+      {/* Floating Toolbar — always visible on mobile, hover on desktop */}
+      {showToolbar && (
+        <div className="zone-handle absolute -top-9 right-0 flex items-center gap-1 z-30 opacity-0 group-hover:opacity-100 sm:group-hover:opacity-100 pointer-fine:opacity-0 pointer-coarse:opacity-100 transition-opacity">
+          {!isEmpty && (
+            <button
+              onPointerDown={(e) => { e.stopPropagation(); handleClear(e); }}
+              className="w-8 h-8 flex items-center justify-center rounded-md bg-white shadow border border-slate-200 text-slate-500 hover:text-red-500 hover:bg-slate-50 transition-colors"
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
+          )}
+          <button
+            onPointerDown={(e) => { e.stopPropagation(); e.preventDefault(); onRemove(); }}
+            className="w-8 h-8 flex items-center justify-center rounded-md bg-white shadow border border-slate-200 text-slate-500 hover:text-red-500 hover:bg-slate-50 transition-colors"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
+
+      {/* Delete/Clear buttons shown when selected (for mobile) */}
+      {isSelected && (
+        <div className="zone-handle absolute -top-9 right-0 flex items-center gap-1 z-30">
+          {!isEmpty && (
+            <button
+              onPointerDown={(e) => { e.stopPropagation(); handleClear(e); }}
+              className="w-8 h-8 flex items-center justify-center rounded-md bg-white shadow border border-slate-200 text-slate-500 active:text-red-500 transition-colors"
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
+          )}
+          <button
+            onPointerDown={(e) => { e.stopPropagation(); e.preventDefault(); onRemove(); }}
+            className="w-8 h-8 flex items-center justify-center rounded-md bg-white shadow border border-slate-200 text-slate-500 active:text-red-500 transition-colors"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
 
       {/* Drawing canvas */}
       <div className="relative flex-1 w-full h-full">
         <canvas
           ref={canvasRef}
           className="w-full h-full touch-none block"
-          onMouseDown={(e) => e.stopPropagation()} // allow signature pad to handle drawing
+          onPointerDown={(e) => e.stopPropagation()}
         />
         {isEmpty && (
           <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none text-sky-500/50">
@@ -206,6 +236,7 @@ export function PdfSignaturePage({ hideHeader }: { hideHeader?: boolean }) {
   const [renderedPages, setRenderedPages] = React.useState<RenderedPage[]>([]);
   const [zones, setZones] = React.useState<SignatureZone[]>([]);
   const [sigSizePct, setSigSizePct] = React.useState(22);
+  const [selectedZoneId, setSelectedZoneId] = React.useState<string | null>(null);
 
   // Pen settings (global, synced to all zone pads)
   const [penColor, setPenColor] = React.useState("#000000");
@@ -299,14 +330,16 @@ export function PdfSignaturePage({ hideHeader }: { hideHeader?: boolean }) {
     setZones((z) => [...z, { id, pageIndex, pdfX, pdfY, pdfW, pdfH }]);
   };
 
-  // Drag toolbar → move zone
-  const makeDragHandler = (zone: SignatureZone) => (e: React.MouseEvent) => {
+  // Drag handle → move zone (Pointer Events)
+  const makeDragHandler = (zone: SignatureZone) => (e: React.PointerEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    const el = e.currentTarget as HTMLElement;
+    el.setPointerCapture(e.pointerId);
     const startX = e.clientX, startY = e.clientY;
     const startPdfX = zone.pdfX, startPdfY = zone.pdfY;
     let moved = false;
-    const onMove = (me: MouseEvent) => {
+    const onMove = (me: PointerEvent) => {
       const container = pageContainerRefs.current[zone.pageIndex];
       if (!container) return;
       const page = renderedPages[zone.pageIndex];
@@ -321,19 +354,23 @@ export function PdfSignaturePage({ hideHeader }: { hideHeader?: boolean }) {
     };
     const onUp = () => {
       if (moved) suppressNextClick.current = true;
-      window.removeEventListener("mousemove", onMove);
-      window.removeEventListener("mouseup", onUp);
+      el.removeEventListener("pointermove", onMove);
+      el.removeEventListener("pointerup", onUp);
+      el.removeEventListener("pointercancel", onUp);
     };
-    window.addEventListener("mousemove", onMove);
-    window.addEventListener("mouseup", onUp);
+    el.addEventListener("pointermove", onMove);
+    el.addEventListener("pointerup", onUp);
+    el.addEventListener("pointercancel", onUp);
   };
 
-  // Drag resize handle → resize zone
-  const makeResizeHandler = (zone: SignatureZone) => (e: React.MouseEvent) => {
+  // Resize handle → resize zone (Pointer Events)
+  const makeResizeHandler = (zone: SignatureZone) => (e: React.PointerEvent) => {
     e.preventDefault(); e.stopPropagation();
+    const el = e.currentTarget as HTMLElement;
+    el.setPointerCapture(e.pointerId);
     const startX = e.clientX, startY = e.clientY;
     const startW = zone.pdfW, startH = zone.pdfH, startPdfY = zone.pdfY;
-    const onMove = (me: MouseEvent) => {
+    const onMove = (me: PointerEvent) => {
       const container = pageContainerRefs.current[zone.pageIndex];
       if (!container) return;
       const page = renderedPages[zone.pageIndex];
@@ -348,12 +385,59 @@ export function PdfSignaturePage({ hideHeader }: { hideHeader?: boolean }) {
     };
     const onUp = () => {
       suppressNextClick.current = true;
-      window.removeEventListener("mousemove", onMove);
-      window.removeEventListener("mouseup", onUp);
+      el.removeEventListener("pointermove", onMove);
+      el.removeEventListener("pointerup", onUp);
+      el.removeEventListener("pointercancel", onUp);
     };
-    window.addEventListener("mousemove", onMove);
-    window.addEventListener("mouseup", onUp);
+    el.addEventListener("pointermove", onMove);
+    el.addEventListener("pointerup", onUp);
+    el.addEventListener("pointercancel", onUp);
   };
+
+  // Nudge / resize selected zone (for D-pad buttons & keyboard)
+  const NUDGE = 8;
+  const nudgeZone = React.useCallback((dx: number, dy: number) => {
+    setZones((zs) => zs.map((z) => {
+      if (z.id !== selectedZoneId) return z;
+      const page = renderedPages[z.pageIndex];
+      if (!page) return z;
+      return {
+        ...z,
+        pdfX: Math.max(0, Math.min(z.pdfX + dx, page.pdfWidth - z.pdfW)),
+        pdfY: Math.max(0, Math.min(z.pdfY + dy, page.pdfHeight - z.pdfH)),
+      };
+    }));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedZoneId, renderedPages]);
+
+  const scaleZone = React.useCallback((factor: number) => {
+    setZones((zs) => zs.map((z) => {
+      if (z.id !== selectedZoneId) return z;
+      const page = renderedPages[z.pageIndex];
+      if (!page) return z;
+      const newW = Math.max(40, Math.min(z.pdfW * factor, page.pdfWidth));
+      const newH = Math.max(15, z.pdfH * factor);
+      return { ...z, pdfW: newW, pdfH: newH };
+    }));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedZoneId, renderedPages]);
+
+  // Keyboard arrow nudge for selected zone
+  React.useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (!selectedZoneId) return;
+      const tag = (document.activeElement as HTMLElement)?.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "CANVAS") return;
+      if (e.key === "ArrowLeft")  { e.preventDefault(); nudgeZone(-NUDGE, 0); }
+      if (e.key === "ArrowRight") { e.preventDefault(); nudgeZone(NUDGE, 0); }
+      if (e.key === "ArrowUp")    { e.preventDefault(); nudgeZone(0, NUDGE); }
+      if (e.key === "ArrowDown")  { e.preventDefault(); nudgeZone(0, -NUDGE); }
+      if (e.key === "+" || e.key === "=") scaleZone(1.1);
+      if (e.key === "-") scaleZone(0.9);
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [selectedZoneId, nudgeZone, scaleZone]);
 
   const removeZone = (id: string) => {
     sigPads.current.delete(id);
@@ -483,9 +567,56 @@ export function PdfSignaturePage({ hideHeader }: { hideHeader?: boolean }) {
                 {/* Hint */}
                 <div className="flex items-start gap-2 bg-slate-800/80 border border-slate-700 text-slate-400 rounded-xl px-3 py-2 text-xs w-full sm:w-auto">
                   <Info className="w-3.5 h-3.5 shrink-0 mt-0.5" />
-                  <span>Klik halaman → tambah kotak. Toolbar abu = drag. Pojok kanan-bawah = resize.</span>
+                  <span>Klik halaman → tambah kotak. Seret ↖ untuk pindah, ↘ untuk resize. Di HP: pilih kotak lalu gunakan tombol arah di bawah.</span>
                 </div>
               </div>
+
+              {/* Mobile D-pad for selected zone */}
+              {selectedZoneId && (
+                <div className="bg-slate-900/60 border border-sky-800/50 rounded-2xl p-5 backdrop-blur space-y-4">
+                  <p className="text-sm font-medium text-sky-300 text-center">📱 Geser Kotak TTD Aktif</p>
+                  {/* Arrow D-pad */}
+                  <div className="flex flex-col items-center gap-1">
+                    <button type="button" aria-label="Geser atas"
+                      onPointerDown={(e) => { e.preventDefault(); nudgeZone(0, NUDGE); }}
+                      className="w-11 h-11 flex items-center justify-center rounded-xl bg-slate-800 border border-slate-700 text-slate-300 active:bg-sky-600 active:text-white transition-colors touch-manipulation">
+                      <ChevronUp className="w-5 h-5" />
+                    </button>
+                    <div className="flex items-center gap-1">
+                      <button type="button" aria-label="Geser kiri"
+                        onPointerDown={(e) => { e.preventDefault(); nudgeZone(-NUDGE, 0); }}
+                        className="w-11 h-11 flex items-center justify-center rounded-xl bg-slate-800 border border-slate-700 text-slate-300 active:bg-sky-600 active:text-white transition-colors touch-manipulation">
+                        <ChevronLeft className="w-5 h-5" />
+                      </button>
+                      <div className="w-11 h-11 flex items-center justify-center rounded-xl bg-sky-600/10 border border-sky-500/30 text-sky-400 text-xs font-bold">TTD</div>
+                      <button type="button" aria-label="Geser kanan"
+                        onPointerDown={(e) => { e.preventDefault(); nudgeZone(NUDGE, 0); }}
+                        className="w-11 h-11 flex items-center justify-center rounded-xl bg-slate-800 border border-slate-700 text-slate-300 active:bg-sky-600 active:text-white transition-colors touch-manipulation">
+                        <ChevronRight className="w-5 h-5" />
+                      </button>
+                    </div>
+                    <button type="button" aria-label="Geser bawah"
+                      onPointerDown={(e) => { e.preventDefault(); nudgeZone(0, -NUDGE); }}
+                      className="w-11 h-11 flex items-center justify-center rounded-xl bg-slate-800 border border-slate-700 text-slate-300 active:bg-sky-600 active:text-white transition-colors touch-manipulation">
+                      <ChevronDown className="w-5 h-5" />
+                    </button>
+                  </div>
+                  {/* Scale buttons */}
+                  <div className="flex items-center justify-center gap-3">
+                    <button type="button"
+                      onPointerDown={(e) => { e.preventDefault(); scaleZone(0.9); }}
+                      className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-slate-300 active:bg-red-600/30 active:border-red-500 transition-colors touch-manipulation text-sm font-medium">
+                      <Minus className="w-4 h-4" /> Perkecil
+                    </button>
+                    <button type="button"
+                      onPointerDown={(e) => { e.preventDefault(); scaleZone(1.1); }}
+                      className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-slate-300 active:bg-emerald-600/30 active:border-emerald-500 transition-colors touch-manipulation text-sm font-medium">
+                      <Plus className="w-4 h-4" /> Perbesar
+                    </button>
+                  </div>
+                  <p className="text-xs text-slate-500 text-center">Keyboard: ← → ↑ ↓ / + - · Klik kotak lain untuk pilih</p>
+                </div>
+              )}
 
               {/* Pages */}
               <div ref={pagesWrapRef} className="space-y-4 pt-4">
@@ -514,9 +645,11 @@ export function PdfSignaturePage({ hideHeader }: { hideHeader?: boolean }) {
                             page={pg}
                             penColor={penColor}
                             penThickness={penThickness}
-                            onDragStart={makeDragHandler(zone)}
-                            onResizeStart={makeResizeHandler(zone)}
+                            isSelected={selectedZoneId === zone.id}
+                            onPointerDownDrag={makeDragHandler(zone)}
+                            onPointerDownResize={makeResizeHandler(zone)}
                             onRemove={() => removeZone(zone.id)}
+                            onSelect={() => setSelectedZoneId(zone.id)}
                             registerPad={registerPad}
                             onSignatureChange={onSignatureChange}
                           />

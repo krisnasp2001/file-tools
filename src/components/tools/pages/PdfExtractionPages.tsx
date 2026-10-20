@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import * as React from "react";
 import { ToolPageLayout } from "@/components/tools/ToolPageLayout";
@@ -88,6 +88,28 @@ export function GenericPdfExtractPage({
           outName = `${baseName}.txt`;
           break;
         case "docx":
+          try {
+            setOcrProgress("Analyzing document layout & reconstructing columns...");
+            const formData = new FormData();
+            formData.append("file", currentFile);
+            const response = await fetch("/api/convert/pdf-to-docx", {
+              method: "POST",
+              body: formData,
+            });
+
+            if (response.ok) {
+              resultData = await response.blob();
+              outName = `${baseName}.docx`;
+              break;
+            }
+          } catch (apiErr) {
+            console.warn(
+              "High-fidelity server converter unavailable, falling back to client-side engine:",
+              apiErr
+            );
+          }
+
+          // Fallback to client-side conversion
           resultData = await convertPdfToDocx(extracted);
           outName = `${baseName}.docx`;
           break;

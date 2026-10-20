@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import * as React from "react";
 import { ToolPageLayout } from "@/components/tools/ToolPageLayout";
@@ -15,6 +15,13 @@ import {
   Stamp,
   Type,
   Move,
+  ChevronUp,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  Plus,
+  Minus,
+  Crosshair,
 } from "lucide-react";
 import { PDFDocument, rgb, degrees, StandardFonts } from "pdf-lib";
 
@@ -71,15 +78,18 @@ function WatermarkBox({
   const width = zone.pdfW * scale;
   const height = zone.pdfH * scale;
 
-  const onDragStart = (e: React.MouseEvent) => {
+  // ── Pointer-based drag (works on mouse AND touch) ─────────────
+  const onDragPointerDown = (e: React.PointerEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    const el = e.currentTarget as HTMLElement;
+    el.setPointerCapture(e.pointerId);
     const startX = e.clientX;
     const startY = e.clientY;
     const startPdfX = zone.pdfX;
     const startPdfY = zone.pdfY;
 
-    const onMove = (me: MouseEvent) => {
+    const onMove = (me: PointerEvent) => {
       const dx = (me.clientX - startX) / scale;
       const dy = -(me.clientY - startY) / scale;
       const newX = Math.max(0, Math.min(startPdfX + dx, page.pdfWidth - zone.pdfW));
@@ -87,37 +97,43 @@ function WatermarkBox({
       onChange({ ...zone, pdfX: newX, pdfY: newY });
     };
     const onUp = () => {
-      window.removeEventListener("mousemove", onMove);
-      window.removeEventListener("mouseup", onUp);
+      el.removeEventListener("pointermove", onMove);
+      el.removeEventListener("pointerup", onUp);
+      el.removeEventListener("pointercancel", onUp);
     };
-    window.addEventListener("mousemove", onMove);
-    window.addEventListener("mouseup", onUp);
+    el.addEventListener("pointermove", onMove);
+    el.addEventListener("pointerup", onUp);
+    el.addEventListener("pointercancel", onUp);
   };
 
-  const onResizeStart = (e: React.MouseEvent) => {
+  // ── Pointer-based resize (works on mouse AND touch) ───────────
+  const onResizePointerDown = (e: React.PointerEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    const el = e.currentTarget as HTMLElement;
+    el.setPointerCapture(e.pointerId);
     const startX = e.clientX;
     const startY = e.clientY;
     const startPdfW = zone.pdfW;
     const startPdfH = zone.pdfH;
     const startPdfY = zone.pdfY;
 
-    const onMove = (me: MouseEvent) => {
+    const onMove = (me: PointerEvent) => {
       const dx = (me.clientX - startX) / scale;
       const dy = (me.clientY - startY) / scale;
       const newW = Math.max(50, Math.min(startPdfW + dx, page.pdfWidth - zone.pdfX));
       const newH = Math.max(20, Math.min(startPdfH + dy, startPdfY + startPdfH));
       const newY = startPdfY + startPdfH - newH;
-
       onChange({ ...zone, pdfW: newW, pdfH: newH, pdfY: newY });
     };
     const onUp = () => {
-      window.removeEventListener("mousemove", onMove);
-      window.removeEventListener("mouseup", onUp);
+      el.removeEventListener("pointermove", onMove);
+      el.removeEventListener("pointerup", onUp);
+      el.removeEventListener("pointercancel", onUp);
     };
-    window.addEventListener("mousemove", onMove);
-    window.addEventListener("mouseup", onUp);
+    el.addEventListener("pointermove", onMove);
+    el.addEventListener("pointerup", onUp);
+    el.addEventListener("pointercancel", onUp);
   };
 
   return (
@@ -125,21 +141,28 @@ function WatermarkBox({
       style={{ position: "absolute", left, top, width, height, zIndex: 10 }}
       className="group"
     >
+      {/* Drag handle — enlarged for touch */}
       <div
-        className="absolute -top-3 -left-3 w-7 h-7 flex items-center justify-center bg-white border border-violet-500 rounded-full shadow-md text-violet-500 cursor-move z-30 hover:bg-violet-50 transition-colors opacity-80 group-hover:opacity-100"
-        onMouseDown={onDragStart}
+        className="absolute -top-5 -left-5 w-10 h-10 flex items-center justify-center bg-white border-2 border-violet-500 rounded-full shadow-lg text-violet-500 cursor-move z-30 hover:bg-violet-50 active:bg-violet-100 transition-colors"
+        onPointerDown={onDragPointerDown}
+        style={{ touchAction: "none" }}
         title="Move Watermark"
       >
-        <Move className="w-3.5 h-3.5" />
+        <Move className="w-4 h-4" />
       </div>
       <div className="absolute inset-0 border-2 border-dashed border-violet-500 bg-violet-500/5 pointer-events-none" />
       <div className="absolute -top-1.5 -left-1.5 w-3 h-3 bg-white border border-violet-500 pointer-events-none" />
       <div className="absolute -top-1.5 -right-1.5 w-3 h-3 bg-white border border-violet-500 pointer-events-none" />
       <div className="absolute -bottom-1.5 -left-1.5 w-3 h-3 bg-white border border-violet-500 pointer-events-none" />
+      {/* Resize handle — enlarged touch target */}
       <div
-        className="absolute -bottom-1.5 -right-1.5 w-3 h-3 bg-violet-500 cursor-se-resize shadow-sm z-20"
-        onMouseDown={onResizeStart}
-      />
+        className="absolute -bottom-5 -right-5 w-10 h-10 flex items-center justify-center cursor-se-resize z-20"
+        onPointerDown={onResizePointerDown}
+        style={{ touchAction: "none" }}
+        title="Resize"
+      >
+        <div className="w-4 h-4 bg-violet-500 shadow-sm rounded-sm" />
+      </div>
       <div className="relative flex-1 w-full h-full flex items-center justify-center overflow-visible pointer-events-none">
         <span
           className="font-bold whitespace-nowrap"
@@ -157,6 +180,8 @@ function WatermarkBox({
     </div>
   );
 }
+
+const NUDGE_PX = 8;
 
 export function PdfWatermarkPage({ hideHeader }: { hideHeader?: boolean }) {
   const [files, setFiles] = React.useState<SelectedFileItem[]>([]);
@@ -176,6 +201,57 @@ export function PdfWatermarkPage({ hideHeader }: { hideHeader?: boolean }) {
   const pagesWrapRef = React.useRef<HTMLDivElement>(null);
 
   const currentFile = files.find((f) => f.status === "ready")?.file;
+
+  // ── Nudge / scale / center helpers ───────────────────────────────
+  const nudgeWatermark = React.useCallback((dx: number, dy: number) => {
+    setZone((z) => {
+      if (!z || !renderedPages[0]) return z;
+      const page = renderedPages[0];
+      return {
+        ...z,
+        pdfX: Math.max(0, Math.min(z.pdfX + dx, page.pdfWidth - z.pdfW)),
+        pdfY: Math.max(0, Math.min(z.pdfY + dy, page.pdfHeight - z.pdfH)),
+      };
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [renderedPages]);
+
+  const scaleWatermark = React.useCallback((factor: number) => {
+    setZone((z) => {
+      if (!z || !renderedPages[0]) return z;
+      const page = renderedPages[0];
+      const newW = Math.max(50, Math.min(z.pdfW * factor, page.pdfWidth));
+      const newH = Math.max(20, z.pdfH * factor);
+      return { ...z, pdfW: newW, pdfH: newH };
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [renderedPages]);
+
+  const centerWatermark = React.useCallback(() => {
+    setZone((z) => {
+      if (!z || !renderedPages[0]) return z;
+      const page = renderedPages[0];
+      return { ...z, pdfX: (page.pdfWidth - z.pdfW) / 2, pdfY: (page.pdfHeight - z.pdfH) / 2 };
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [renderedPages]);
+
+  // ── Keyboard arrow nudge ─────────────────────────────────────────
+  React.useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (!zone) return;
+      const tag = (document.activeElement as HTMLElement)?.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA") return;
+      if (e.key === "ArrowLeft")  { e.preventDefault(); nudgeWatermark(-NUDGE_PX, 0); }
+      if (e.key === "ArrowRight") { e.preventDefault(); nudgeWatermark(NUDGE_PX, 0); }
+      if (e.key === "ArrowUp")    { e.preventDefault(); nudgeWatermark(0, NUDGE_PX); }
+      if (e.key === "ArrowDown")  { e.preventDefault(); nudgeWatermark(0, -NUDGE_PX); }
+      if (e.key === "+" || e.key === "=") scaleWatermark(1.1);
+      if (e.key === "-") scaleWatermark(0.9);
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [zone, nudgeWatermark, scaleWatermark]);
 
   React.useEffect(() => {
     if (renderedPages.length > 0 && pagesWrapRef.current) {
@@ -455,6 +531,56 @@ export function PdfWatermarkPage({ hideHeader }: { hideHeader?: boolean }) {
                   />
                 </div>
                 <p className="mt-4 text-sm text-slate-500">Watermark akan diterapkan pada semua halaman dengan posisi yang sama</p>
+              </div>
+
+              {/* ── Mobile D-pad controls ─────────────────────────── */}
+              <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-5 backdrop-blur space-y-4">
+                <p className="text-sm font-medium text-slate-300 text-center">📱 Atur Posisi &amp; Ukuran Watermark</p>
+                {/* Arrow D-pad */}
+                <div className="flex flex-col items-center gap-1">
+                  <button type="button" aria-label="Geser atas"
+                    onPointerDown={(e) => { e.preventDefault(); nudgeWatermark(0, NUDGE_PX); }}
+                    className="w-11 h-11 flex items-center justify-center rounded-xl bg-slate-800 border border-slate-700 text-slate-300 active:bg-violet-600 active:text-white transition-colors touch-manipulation">
+                    <ChevronUp className="w-5 h-5" />
+                  </button>
+                  <div className="flex items-center gap-1">
+                    <button type="button" aria-label="Geser kiri"
+                      onPointerDown={(e) => { e.preventDefault(); nudgeWatermark(-NUDGE_PX, 0); }}
+                      className="w-11 h-11 flex items-center justify-center rounded-xl bg-slate-800 border border-slate-700 text-slate-300 active:bg-violet-600 active:text-white transition-colors touch-manipulation">
+                      <ChevronLeft className="w-5 h-5" />
+                    </button>
+                    <button type="button" aria-label="Tengahkan watermark"
+                      onPointerDown={(e) => { e.preventDefault(); centerWatermark(); }}
+                      className="w-11 h-11 flex items-center justify-center rounded-xl bg-violet-600/20 border border-violet-500/40 text-violet-400 active:bg-violet-600 active:text-white transition-colors touch-manipulation"
+                      title="Tengahkan">
+                      <Crosshair className="w-4 h-4" />
+                    </button>
+                    <button type="button" aria-label="Geser kanan"
+                      onPointerDown={(e) => { e.preventDefault(); nudgeWatermark(NUDGE_PX, 0); }}
+                      className="w-11 h-11 flex items-center justify-center rounded-xl bg-slate-800 border border-slate-700 text-slate-300 active:bg-violet-600 active:text-white transition-colors touch-manipulation">
+                      <ChevronRight className="w-5 h-5" />
+                    </button>
+                  </div>
+                  <button type="button" aria-label="Geser bawah"
+                    onPointerDown={(e) => { e.preventDefault(); nudgeWatermark(0, -NUDGE_PX); }}
+                    className="w-11 h-11 flex items-center justify-center rounded-xl bg-slate-800 border border-slate-700 text-slate-300 active:bg-violet-600 active:text-white transition-colors touch-manipulation">
+                    <ChevronDown className="w-5 h-5" />
+                  </button>
+                </div>
+                {/* Scale buttons */}
+                <div className="flex items-center justify-center gap-3">
+                  <button type="button"
+                    onPointerDown={(e) => { e.preventDefault(); scaleWatermark(0.9); }}
+                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-slate-300 active:bg-red-600/30 active:border-red-500 transition-colors touch-manipulation text-sm font-medium">
+                    <Minus className="w-4 h-4" /> Perkecil
+                  </button>
+                  <button type="button"
+                    onPointerDown={(e) => { e.preventDefault(); scaleWatermark(1.1); }}
+                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-slate-300 active:bg-emerald-600/30 active:border-emerald-500 transition-colors touch-manipulation text-sm font-medium">
+                    <Plus className="w-4 h-4" /> Perbesar
+                  </button>
+                </div>
+                <p className="text-xs text-slate-500 text-center">Desktop: seret handle ↖ pindah · ↘ resize · Keyboard: ← → ↑ ↓ / + -</p>
               </div>
             </div>
           )}

@@ -1,20 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
 import { spawn } from "child_process";
 import fs from "fs/promises";
+import fsSync from "fs";
 import path from "path";
 import os from "os";
 import crypto from "crypto";
 
 function getPythonPath(): string {
+  if (process.env.PYTHON_PATH) {
+    return process.env.PYTHON_PATH;
+  }
   const rootDir = process.cwd();
-  // Check virtual environment first
   const winVenv = path.join(rootDir, ".venv", "Scripts", "python.exe");
   const unixVenv = path.join(rootDir, ".venv", "bin", "python");
 
   if (process.platform === "win32") {
-    return winVenv;
+    return fsSync.existsSync(winVenv) ? winVenv : "python";
   }
-  return unixVenv;
+  return fsSync.existsSync(unixVenv) ? unixVenv : "python3";
 }
 
 export async function POST(req: NextRequest) {
@@ -29,6 +32,64 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
 
+    // 1. If remote high-fidelity microservice URL is configured, forward to it
+    const remoteApiUrl = process.env.CONVERTER_API_URL;
+    if (remoteApiUrl) {
+      try {
+        const remoteFormData = new FormData();
+        remoteFormData.append("file", file);
+        const remoteRes = await fetch(`${remoteApiUrl.replace(/\/$/, "")}/convert`, {
+          method: "POST",
+          body: remoteFormData,
+        });
+
+        if (remoteRes.ok) {
+          const docxArrayBuffer = await remoteRes.arrayBuffer();
+          return new NextResponse(Buffer.from(docxArrayBuffer), {
+            status: 200,
+            headers: {
+              "Content-Type":
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+              "Content-Disposition": `attachment; filename="${encodeURIComponent(
+                file.name.replace(/\.[^/.]+$/, "") + ".docx"
+              )}"`,
+            },
+          });
+        }
+      } catch (remoteErr) {
+        console.warn("Remote converter failed, falling back:", remoteErr);
+      }
+    }
+
+    // 2. Check if running on Vercel with internal Python Serverless Function (/api/py/convert)
+    if (process.env.VERCEL) {
+      try {
+        const vercelPyFormData = new FormData();
+        vercelPyFormData.append("file", file);
+        const vercelPyRes = await fetch(`${req.nextUrl.origin}/api/py/convert`, {
+          method: "POST",
+          body: vercelPyFormData,
+        });
+
+        if (vercelPyRes.ok) {
+          const docxArrayBuffer = await vercelPyRes.arrayBuffer();
+          return new NextResponse(Buffer.from(docxArrayBuffer), {
+            status: 200,
+            headers: {
+              "Content-Type":
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+              "Content-Disposition": `attachment; filename="${encodeURIComponent(
+                file.name.replace(/\.[^/.]+$/, "") + ".docx"
+              )}"`,
+            },
+          });
+        }
+      } catch (vercelPyErr) {
+        console.warn("Vercel internal Python route failed:", vercelPyErr);
+      }
+    }
+
+    // 3. Local Python execution
     const uniqueId = crypto.randomUUID();
     const tempDir = os.tmpdir();
     tempInputPath = path.join(tempDir, `input_${uniqueId}.pdf`);

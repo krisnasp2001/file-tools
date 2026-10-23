@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { getToolBySlug, getAllToolSlugs, TOOL_CATEGORIES } from "@/lib/tools/registry";
 import { ToolPageClient } from "./ToolPageClient";
-import { ToolPageShell, ToolFaqSection } from "@/components/tools/ToolPageShell";
+import { ToolPageShell, ToolFaqSection, ToolKeywordsSection } from "@/components/tools/ToolPageShell";
 import { SITE_URL } from "@/lib/config/site";
 import type { Metadata } from "next";
 
@@ -16,28 +16,58 @@ export async function generateMetadata({ params }: ToolPageProps): Promise<Metad
     return { title: "Tool Not Found" };
   }
 
+  const category = TOOL_CATEGORIES.find((c) => c.id === tool.category);
+  const curatedKeywords = tool.keywords || [];
+  const dynamicKeywords = [
+    tool.name,
+    `${tool.name} free`,
+    `${tool.name} online`,
+    `${tool.name} no upload`,
+    `${tool.name} gratis`,
+    `cara pakai ${tool.name}`,
+    ...(category ? [`${category.name.toLowerCase()} tools`, `${category.name.toLowerCase()} converter`] : []),
+    ...tool.inputTypes.map((t) => `${t.replace(".", "").toUpperCase()} converter`),
+    ...tool.outputTypes.map((t) => `convert to ${t.replace(".", "").toUpperCase()}`),
+    "file converter",
+    "browser-based",
+    "client-side",
+    "private file tools",
+    "no server upload",
+  ];
+
+  // Deduplicate case-insensitively while preserving original casing
+  const seen = new Set<string>();
+  const allKeywords: string[] = [];
+  for (const kw of [...curatedKeywords, ...dynamicKeywords]) {
+    const lower = kw.toLowerCase().trim();
+    if (!seen.has(lower) && lower.length > 0) {
+      seen.add(lower);
+      allKeywords.push(kw.trim());
+    }
+  }
+
+  // High-CTR, search-optimized page title and description
+  const pageTitle = `${tool.name} - Free Online, No Upload Required`;
+  const pageDescription = `${tool.description} 100% free, private, and runs directly in your browser without uploading files.`;
+
   return {
-    title: tool.name,
-    description: tool.description,
-    keywords: [
-      tool.name,
-      `${tool.name} free`,
-      `${tool.name} online`,
-      `${tool.name} no upload`,
-      ...tool.inputTypes.map((t) => t.replace(".", "").toUpperCase()),
-      ...tool.outputTypes.map((t) => t.replace(".", "").toUpperCase()),
-      "file converter",
-      "browser-based",
-      "client-side",
-      "private",
-    ],
+    title: pageTitle,
+    description: pageDescription,
+    keywords: allKeywords,
     alternates: {
       canonical: `/tools/${tool.slug}`,
     },
     openGraph: {
-      title: `${tool.name} | File Tools`,
-      description: tool.description,
+      title: `${pageTitle} | File Tools`,
+      description: pageDescription,
       url: `/tools/${tool.slug}`,
+      siteName: "File Tools",
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${pageTitle} | File Tools`,
+      description: pageDescription,
     },
   };
 }
@@ -65,6 +95,7 @@ export default async function ToolPage({ params }: ToolPageProps) {
     url: `${SITE_URL}/tools/${toolDef.slug}`,
     applicationCategory: "UtilityApplication",
     operatingSystem: "Any",
+    keywords: toolDef.keywords ? toolDef.keywords.join(", ") : undefined,
     offers: {
       "@type": "Offer",
       price: "0",
@@ -169,7 +200,7 @@ export default async function ToolPage({ params }: ToolPageProps) {
         />
       )}
 
-      {/* ── 2. SSR shell: breadcrumb + h1 + description (Google-crawlable) ── */}
+      {/* ── 2. SSR shell: breadcrumb + h1 + description + search chips (Google-crawlable) ── */}
       <ToolPageShell tool={toolDef} category={category} />
 
       {/* ── 3. Client-side interactive workspace (suppresses its own header) ── */}
@@ -177,6 +208,9 @@ export default async function ToolPage({ params }: ToolPageProps) {
 
       {/* ── 4. SSR FAQ accordion (Google-crawlable, no JS needed) ── */}
       <ToolFaqSection tool={toolDef} />
+
+      {/* ── 5. SSR Related Searches & Keywords (Google-crawlable) ── */}
+      <ToolKeywordsSection tool={toolDef} />
     </>
   );
 }

@@ -14,16 +14,31 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const cat = TOOL_CATEGORIES.find((c) => c.id === category);
   if (!cat) return { title: "Category Not Found" };
 
+  const pageTitle = `${cat.name} Tools - Free Online File Utilities`;
+  const pageDescription = `${cat.description} 100% free, private, and client-side in your browser with no upload required.`;
+
   return {
-    title: `${cat.name} Tools`,
-    description: cat.description,
+    title: pageTitle,
+    description: pageDescription,
+    keywords: cat.keywords || [
+      `${cat.name.toLowerCase()} tools`,
+      `free ${cat.name.toLowerCase()} converter`,
+      "file converter online",
+      "private file tools",
+    ],
     alternates: {
       canonical: `/categories/${cat.id}`,
     },
     openGraph: {
-      title: `${cat.name} Tools | File Tools`,
-      description: cat.description,
+      title: `${pageTitle} | File Tools`,
+      description: pageDescription,
       url: `/categories/${cat.id}`,
+      siteName: "File Tools",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${pageTitle} | File Tools`,
+      description: pageDescription,
     },
   };
 }

@@ -1,6 +1,7 @@
 import { ToolCategory, ToolDefinition, CategoryDefinition } from "./types";
+import { TOOL_KEYWORDS, CATEGORY_KEYWORDS, getKeywordsForTool } from "./keywords";
 
-export const TOOL_CATEGORIES: CategoryDefinition[] = [
+const RAW_CATEGORIES: CategoryDefinition[] = [
   {
     id: "image",
     name: "Image",
@@ -33,7 +34,12 @@ export const TOOL_CATEGORIES: CategoryDefinition[] = [
   },
 ];
 
-export const TOOLS: ToolDefinition[] = [
+export const TOOL_CATEGORIES: CategoryDefinition[] = RAW_CATEGORIES.map((cat) => ({
+  ...cat,
+  keywords: CATEGORY_KEYWORDS[cat.id] || [],
+}));
+
+const RAW_TOOLS: ToolDefinition[] = [
   // PDF Tools
   {
     id: "jpg-to-pdf",
@@ -1043,6 +1049,11 @@ export const TOOLS: ToolDefinition[] = [
   },
 ];
 
+export const TOOLS: ToolDefinition[] = RAW_TOOLS.map((t) => ({
+  ...t,
+  keywords: t.keywords || TOOL_KEYWORDS[t.slug] || getKeywordsForTool(t.slug, t.name),
+}));
+
 export function getToolBySlug(slug: string): ToolDefinition | undefined {
   return TOOLS.find((t) => t.slug === slug || t.id === slug);
 }
@@ -1054,3 +1065,5 @@ export function getToolsByCategory(category: ToolCategory): ToolDefinition[] {
 export function getAllToolSlugs(): string[] {
   return TOOLS.map((t) => t.slug);
 }
+
+export { TOOL_KEYWORDS, CATEGORY_KEYWORDS, getKeywordsForTool };

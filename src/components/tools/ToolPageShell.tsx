@@ -99,6 +99,23 @@ export function ToolPageShell({ tool, category }: ToolPageShellProps) {
             Free — no account required
           </span>
         </div>
+
+        {/* Popular search keywords / tags — SSR for Googlebot text indexing & discoverability */}
+        {tool.keywords && tool.keywords.length > 0 && (
+          <div className="mt-4 flex flex-wrap items-center gap-1.5 pt-1 text-xs">
+            <span className="font-medium text-neutral-400 dark:text-neutral-500">
+              Popular searches:
+            </span>
+            {tool.keywords.slice(0, 6).map((kw, idx) => (
+              <span
+                key={idx}
+                className="inline-flex items-center rounded-md border border-neutral-200/80 bg-neutral-100/70 px-2 py-0.5 text-[11px] font-medium text-neutral-600 transition-colors dark:border-neutral-800 dark:bg-neutral-800/60 dark:text-neutral-400"
+              >
+                #{kw}
+              </span>
+            ))}
+          </div>
+        )}
       </header>
     </div>
   );
@@ -116,7 +133,7 @@ export function ToolFaqSection({ tool }: { tool: ToolDefinition }) {
   return (
     <section
       aria-labelledby={`faq-heading-${tool.slug}`}
-      className="mx-auto max-w-6xl px-4 pb-16 sm:px-6"
+      className="mx-auto max-w-6xl px-4 pb-12 sm:px-6"
     >
       <div className="border-t border-neutral-200 pt-10 dark:border-neutral-800">
         <h2
@@ -156,6 +173,40 @@ export function ToolFaqSection({ tool }: { tool: ToolDefinition }) {
                 {item.answer}
               </p>
             </details>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/**
+ * Server-rendered Related Searches & Keywords section for a tool page.
+ * Provides on-page crawlable text and semantic tags to boost Google Search indexing.
+ */
+export function ToolKeywordsSection({ tool }: { tool: ToolDefinition }) {
+  if (!tool.keywords || tool.keywords.length === 0) return null;
+
+  return (
+    <section
+      aria-labelledby={`keywords-heading-${tool.slug}`}
+      className="mx-auto max-w-6xl px-4 pb-16 sm:px-6"
+    >
+      <div className="border-t border-neutral-200 pt-8 dark:border-neutral-800">
+        <h2
+          id={`keywords-heading-${tool.slug}`}
+          className="mb-3 text-xs font-semibold tracking-wider text-neutral-400 uppercase dark:text-neutral-500"
+        >
+          Related Searches & Keywords
+        </h2>
+        <div className="flex flex-wrap gap-2">
+          {tool.keywords.map((kw, idx) => (
+            <span
+              key={idx}
+              className="inline-flex items-center rounded-lg border border-neutral-200 bg-white px-3 py-1 text-xs text-neutral-600 transition-colors hover:border-neutral-300 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-300 dark:hover:border-neutral-700"
+            >
+              {kw}
+            </span>
           ))}
         </div>
       </div>

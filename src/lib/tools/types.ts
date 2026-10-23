@@ -33,6 +33,8 @@ export interface ToolDefinition {
   iconName: string;
   isAvailable: boolean;
   badge?: string;
+  /** High-intent SEO keywords and search queries for Google Search indexing & meta tags */
+  keywords?: string[];
   /** FAQ entries for FAQPage JSON-LD rich snippet */
   faq?: ToolFaq[];
   /** Step-by-step guide for HowTo JSON-LD rich snippet */
@@ -44,4 +46,5 @@ export interface CategoryDefinition {
   name: string;
   description: string;
   iconName: string;
+  keywords?: string[];
 }

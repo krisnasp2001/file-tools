@@ -100,22 +100,6 @@ export function ToolPageShell({ tool, category }: ToolPageShellProps) {
           </span>
         </div>
 
-        {/* Popular search keywords / tags — SSR for Googlebot text indexing & discoverability */}
-        {tool.keywords && tool.keywords.length > 0 && (
-          <div className="mt-4 flex flex-wrap items-center gap-1.5 pt-1 text-xs">
-            <span className="font-medium text-neutral-400 dark:text-neutral-500">
-              Popular searches:
-            </span>
-            {tool.keywords.slice(0, 6).map((kw, idx) => (
-              <span
-                key={idx}
-                className="inline-flex items-center rounded-md border border-neutral-200/80 bg-neutral-100/70 px-2 py-0.5 text-[11px] font-medium text-neutral-600 transition-colors dark:border-neutral-800 dark:bg-neutral-800/60 dark:text-neutral-400"
-              >
-                #{kw}
-              </span>
-            ))}
-          </div>
-        )}
       </header>
     </div>
   );
